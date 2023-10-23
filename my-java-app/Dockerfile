@@ -11,7 +11,7 @@ COPY src /app/src
 RUN apt-get update && apt-get install -y openjdk-11-jdk
 
 # Compile your Java code
-RUN javac /app/src/com/example/MyApp.java
+RUN javac /app/src/main/java/com/example/MyApp.java
 
 # Run your Java application
-CMD ["java", "-cp", "/app/src/com/example", "MyApp"]
+CMD ["java", "-cp", "/app/src/main/java/com/example", "MyApp"]
