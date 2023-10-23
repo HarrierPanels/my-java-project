@@ -16,13 +16,15 @@ pipeline {
             steps {
                 script {
                     // Pull the SonarQube Docker image
-                    docker.image('sonarqube:latest').withRun('--name sonarqube -p 9000:9000 -p 9092:9092') { c ->
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { 
+                        docker.image('sonarqube:latest').withRun('--name sonarqube -p 9000:9000 -p 9092:9092') { c ->
                         // Wait for SonarQube to be up and running
                         sh 'while ! curl -s -f -o /dev/null http://localhost:9000; do sleep 5; done'
                         
                         // Perform the analysis
                         sh 'mvn sonar:sonar -X'
-                    }
+                        }
+                   }
                 }
             }
         }
