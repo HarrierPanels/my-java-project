@@ -21,7 +21,7 @@ pipeline {
                         sh 'while ! curl -s -f -o /dev/null http://localhost:9000; do sleep 5; done'
                         
                         // Perform the analysis
-                        sh 'mvn sonar:sonar'
+                        sh 'mvn sonar:sonar -X'
                     }
                 }
             }
