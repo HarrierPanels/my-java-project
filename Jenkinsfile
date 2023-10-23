@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     // Build your Docker image as needed
-                    sh 'docker build -t myapp .'
+                    sh 'docker build -t myapp my-java-app/.'
                 }
             }
         }
