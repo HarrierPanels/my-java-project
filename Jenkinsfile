@@ -40,7 +40,8 @@ pipeline {
                     def buildVersion = env.BUILD_NUMBER ?: 'latest'
 
                     // Tag and push the Docker image
-                    sh "docker tag harrierpanels/myapp:latest harrierpanels/myapp:$buildVersion"
+                    sh "docker tag myapp:latest harrierpanels/myapp:$buildVersion"
+                    sh "docker tag myapp:latest harrierpanels/myapp:latest"
                     sh "docker push harrierpanels/myapp:$buildVersion"
                 }
             }
