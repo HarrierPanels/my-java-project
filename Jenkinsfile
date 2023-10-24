@@ -4,11 +4,6 @@ pipeline {
         label 'aws2023'
     }
 
-    environment {
-        // Define an environment variable to store the DockerHub password
-        DOCKERHUB_PASSWORD = credentials('DockerHubPwd')
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -17,7 +12,22 @@ pipeline {
             }
         }
 
-        //
+        stage('Static Code Analysis with SonarQube') {
+            steps {
+                script {
+                    // Pull the SonarQube Docker image
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { 
+                        docker.image('sonarqube:latest').withRun('--name sonarqube -p 9000:9000 -p 9092:9092') { c ->
+                        // Wait for SonarQube to be up and running
+                        sh 'while ! curl -s -f -o /dev/null http://localhost:9000; do sleep 5; done'
+                        
+                        // Perform the analysis
+                        sh 'mvn sonar:sonar -X'
+                        }
+                   }
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
