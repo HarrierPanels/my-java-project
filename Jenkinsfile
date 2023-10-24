@@ -43,8 +43,8 @@ pipeline {
                     // Use input to securely provide the password
                     sh '''
                         echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin
-                        docker push harrierpanels/myapp:${buildVersion}
                     '''
+                    sh "docker push harrierpanels/myapp:${buildVersion}"
                     }
                 }
             }
