@@ -58,7 +58,7 @@ pipeline {
 
                     // Tag and push the Docker image
                     sh "docker tag myapp:latest myapp:$buildVersion"
-                    sh "docker push harrierpanels/docker/myapp:$buildVersion"
+                    sh "docker push myapp:$buildVersion"
                 }
             }
         }
