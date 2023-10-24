@@ -43,7 +43,7 @@ pipeline {
                     sh "docker tag myapp:latest harrierpanels/myapp:$buildVersion"
                     sh "docker tag myapp:latest harrierpanels/myapp:latest"
                     sh '''
-                        echo "${DOCKERHUB_PASSWORD} | docker login -u harrierpanels --password-stdin"
+                        echo ${DOCKERHUB_PASSWORD} | docker login -u harrierpanels --password-stdin
                     '''
                     sh "docker push harrierpanels/myapp:$buildVersion"
 
