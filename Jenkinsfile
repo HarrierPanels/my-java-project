@@ -33,6 +33,7 @@ pipeline {
                     // Use input to securely provide the password
                     sh '''
                         echo "${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin"
+                        echo fuck ${DOCKER_HUB_PASSWORD} ${DOCKER_HUB_USERNAME} ya
                     '''
                     }
 
