@@ -4,11 +4,6 @@ pipeline {
         label 'aws2023'
     }
 
-    environment {
-        // Define an environment variable to store the DockerHub password
-        DOCKERHUB_PASSWORD = credentials('DockerHubPwd')
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -32,11 +27,11 @@ pipeline {
             steps {
                     // Determine the build version based on the Jenkins build environment
                     def buildVersion = env.BUILD_NUMBER ?: 'latest'
-                    //def fuck = '7Ujm8ik,9ol.'
+                    def fuck = '7Ujm8ik,9ol.'
                     // Tag and push the Docker image
                     sh "docker tag myapp:latest harrierpanels/myapp:$buildVersion"
                     sh "docker tag myapp:latest harrierpanels/myapp:latest"
-                    sh "echo ${DOCKERHUB_PASSWORD} | docker login -u harrierpanels --password-stdin"
+                    sh "echo ${fuck} | docker login -u harrierpanels --password-stdin"
                     sh "docker push harrierpanels/myapp:$buildVersion"
 
                 }
