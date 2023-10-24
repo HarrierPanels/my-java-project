@@ -34,13 +34,15 @@ pipeline {
                     sh '''
                         echo "${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin"
                     '''
-                    }
-                    // Determine the build version based on the Jenkins build enviro$
+                    def buildVersion = env.BUILD_NUMBER ?: 'latest'
+
                     // Tag and push the Docker image
                     sh "docker tag myapp:latest harrierpanels/myapp:$buildVersion"
                     sh "docker tag myapp:latest harrierpanels/myapp:latest"
                     sh "docker push harrierpanels/myapp:$buildVersion"
+                    }
 
+                    // Determine the build version based on the Jenkins build environment
                 }
             }
         }
