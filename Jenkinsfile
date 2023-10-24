@@ -42,8 +42,6 @@ pipeline {
             steps {
                 script {
                     // Tag the Docker image
-                    sh 'docker tag myapp:latest myapp:build_version'
-
                     // Define Docker Hub credentials using a specific credential ID
                     // Log in to Docker Hub using the Docker Hub credentials
                     withCredentials([usernamePassword(credentialsId: 'DockerHubCredentials', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
