@@ -48,7 +48,6 @@ pipeline {
                     // Log in to Docker Hub using the Docker Hub credentials
                     withCredentials([usernamePassword(credentialsId: 'DockerHubCredentials', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
                     sh 'docker login -u $DOCKER_HUB_USERNAME --password-stdin'
-                    sh 'echo fuck $DOCKER_HUB_USERNAME'
                     }
 
                     // Determine the build version based on the Jenkins build environment
