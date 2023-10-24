@@ -45,11 +45,12 @@ pipeline {
                     sh 'docker tag myapp:latest myapp:build_version'
 
                     // Define Docker Hub credentials using a specific credential ID
-                    sh 'echo fuck $DOCKER_HUB_USERNAME $DOCKER_HUB_PASS$WORD ya'
                     // Log in to Docker Hub using the Docker Hub credentials
+                    def dockerLogin = "docker login -u $DOCKER_HUB_USERNAME --password-stdin"
                     withCredentials([usernamePassword(credentialsId: 'DockerHubCredentials', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
-                        sh "docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD"
-                        sh "echo fuck $DOCKER_HUB_USERNAME $DOCKER_HUB_PASS$WORD ya"
+                    // Use input to securely provide the password
+                    sh "$dockerLogin".execute().in.withWriter { it.write("$DOCKER_HUB_PASSWORD\n") }
+                    sh "echo fuck $dockerLogin ya"
                     }
 
                     // Determine the build version based on the Jenkins build environment
