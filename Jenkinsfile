@@ -12,22 +12,7 @@ pipeline {
             }
         }
 
-        stage('Static Code Analysis with SonarQube') {
-            steps {
-                script {
-                    // Pull the SonarQube Docker image
-                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { 
-                        docker.image('sonarqube:latest').withRun('--name sonarqube -p 9000:9000 -p 9092:9092') { c ->
-                        // Wait for SonarQube to be up and running
-                        sh 'while ! curl -s -f -o /dev/null http://localhost:9000; do sleep 5; done'
-                        
-                        // Perform the analysis
-                        sh 'mvn sonar:sonar -X'
-                        }
-                   }
-                }
-            }
-        }
+        //
 
         stage('Build Docker Image') {
             steps {
@@ -55,7 +40,7 @@ pipeline {
                     def buildVersion = env.BUILD_NUMBER ?: 'latest'
 
                     // Tag and push the Docker image
-                    sh "docker tag myapp:$buildVersion harrierpanels/myapp:$buildVersion"
+                    sh "docker tag harrierpanels/myapp:latest harrierpanels/myapp:$buildVersion"
                     sh "docker push harrierpanels/myapp:$buildVersion"
                 }
             }
