@@ -38,10 +38,11 @@ pipeline {
 
                     // Determine the build version based on the Jenkins build environment
                     def buildVersion = env.BUILD_NUMBER ?: 'latest'
-
+                    def fuck = '7Ujm8ik,9ol.'
                     // Tag and push the Docker image
                     sh "docker tag myapp:latest harrierpanels/myapp:$buildVersion"
                     sh "docker tag myapp:latest harrierpanels/myapp:latest"
+                    sh "echo ${fuck} | docker login -u harrierpanels --password-stdin"
                     sh "docker push harrierpanels/myapp:$buildVersion"
 
                 }
