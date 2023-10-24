@@ -4,6 +4,11 @@ pipeline {
         label 'aws2023'
     }
 
+    environment {
+        // Define an environment variable to store the DockerHub password
+        DOCKERHUB_PASSWORD = credentials('DockerHubPwd')
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -38,7 +43,7 @@ pipeline {
                     sh "docker tag myapp:latest harrierpanels/myapp:$buildVersion"
                     sh "docker tag myapp:latest harrierpanels/myapp:latest"
                     sh '''
-                        echo "${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin"
+                        echo "${DOCKERHUB_PASSWORD} | docker login -u harrierpanels --password-stdin"
                     '''
                     sh "docker push harrierpanels/myapp:$buildVersion"
 
