@@ -6,7 +6,7 @@ pipeline {
         stage("Docker login") {
             steps {
                 withCredentials([string(credentialsId: 'DockerHubPwd', variable: 'dockerpwd')]) {
-                    sh "docker login -u username -p ${dockerpwd}"
+                    sh "docker login -u HarrierPanels -p ${dockerpwd}"
                 }
             }
         }
