@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'aws2023'
+        label 'aws2'
     }
 
     stages {
