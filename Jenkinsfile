@@ -1,16 +1,15 @@
 pipeline {
     agent { label 'local1' }
     stages {
-        stage('Check Git Reflog') {
+        stage('Check Merge Commit') {
             steps {
                 script {
-                    // Get the commit ID of the last commit
+                    // Get the list of parents of the current commit
                     def commitId = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    def parents = sh(returnStdout: true, script: "git log --pretty=%P -n 1 ${commitId}").trim()
 
-                    // Check if it's a merge commit
-                    def isMergeCommit = sh(script: "git rev-parse --verify -q ${commitId}^2 > /dev/null", returnStatus: true) == 0
-
-                    if (isMergeCommit) {
+                    // Check if there are multiple parents (indicating a merge commit)
+                    if (parents.contains(' ')) {
                         echo "Commit ${commitId} is a merge commit"
                     } else {
                         error("Commit ${commitId} is not a merge commit")
@@ -18,6 +17,6 @@ pipeline {
                 }
             }
         }
-        // / Add more stages here
+        // Add more stages here
     }
 }
