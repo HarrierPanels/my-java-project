@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'local1' }
     stages {
         stage('Check Git Reflog') {
             steps {
