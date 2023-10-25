@@ -1,15 +1,16 @@
 pipeline {
     agent { label 'local1' }
     stages {
-        stage('Check Merge Commit') {
+        stage('Check Git Commit') {
             steps {
                 script {
-                    // Get the list of parents of the current commit
+                    // Get the commit ID of the current HEAD
                     def commitId = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                    def parents = sh(returnStdout: true, script: "git log --pretty=%P -n 1 ${commitId}").trim()
 
-                    // Check if there are multiple parents (indicating a merge commit)
-                    if (parents.contains(' ')) {
+                    // Get the number of parents for the commit
+                    def parentCount = sh(returnStdout: true, script: "git rev-list --parents -n 1 ${commitId} | awk '{print NF-1}'").trim().toInteger()
+
+                    if (parentCount > 1) {
                         echo "Commit ${commitId} is a merge commit"
                     } else {
                         error("Commit ${commitId} is not a merge commit")
@@ -17,6 +18,6 @@ pipeline {
                 }
             }
         }
-        // // Add more stages here
+        // Add more stages here
     }
 }
