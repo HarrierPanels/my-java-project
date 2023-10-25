@@ -4,24 +4,20 @@ pipeline {
         stage('Check Git Reflog') {
             steps {
                 script {
-                    // Get the Git reflog
-                    def reflogOutput = sh(returnStdout: true, script: 'git reflog')
+                    // Get the commit ID of the last commit
+                    def commitId = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
 
-                    // Print Git Reflog Entries for debugging
-                    echo "Git Reflog Entries:"
-                    echo reflogOutput
+                    // Check if it's a merge commit
+                    def isMergeCommit = sh(script: "git rev-parse --verify -q ${commitId}^2 > /dev/null", returnStatus: true) == 0
 
-                    // Check if the reflog contains a merge commit
-                    def isMergeCommit = reflogOutput.contains("merge dev")
-
-                    if (!isMergeCommit) {
-                        error("Git reflog does not contain a merge commit")
+                    if (isMergeCommit) {
+                        echo "Commit ${commitId} is a merge commit"
                     } else {
-                        echo "Git reflog contains a merge commit"
+                        error("Commit ${commitId} is not a merge commit")
                     }
                 }
             }
         }
-        // Add more stages here /
+        // Add more stages here
     }
 }
