@@ -1,34 +1,27 @@
 pipeline {
     agent { label 'local1' }
-
-    environment {
-        MAIN_BRANCH = 'main'
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Check Git Reflog') {
             steps {
                 script {
-                    // Checkout the code from the repository
-                    checkout scm
-                }
-            }
-        }
-        stage('Check for Merge Commit') {
-            when {
-                expression { currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) == null && env.BRANCH_NAME == env.MAIN_BRANCH }
-            }
-            steps {
-                script {
-                    def mergeCommitExists = sh(script: "git log --merges --oneline origin/${env.MAIN_BRANCH}..${env.BRANCH_NAME}", returnStatus: true) == 0
-                    if (mergeCommitExists) {
-                        echo "A merge commit exists in the history of the ${env.BRANCH_NAME} branch."
+                    // Get the Git reflog
+                    def reflogOutput = sh(returnStdout: true, script: 'git reflog')
+
+                    // Print Git Reflog Entries for debugging
+                    echo "Git Reflog Entries:"
+                    echo reflogOutput
+
+                    // Check if the reflog contains a merge commit
+                    def isMergeCommit = reflogOutput.contains("merge")
+
+                    if (!isMergeCommit) {
+                        error("Git reflog does not contain a merge commit")
                     } else {
-                        error "No merge commit found in the history of the ${env.BRANCH_NAME} branch."
+                        echo "Git reflog contains a merge commit"
                     }
                 }
             }
         }
-        // Add more stages as needed //
+        // Add more stages here
     }
 }
