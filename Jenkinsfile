@@ -12,7 +12,7 @@ pipeline {
                     echo reflogOutput
 
                     // Check if the reflog contains a merge commit
-                    def isMergeCommit = reflogOutput.contains("merge")
+                    def isMergeCommit = reflogOutput.contains("merge dev")
 
                     if (!isMergeCommit) {
                         error("Git reflog does not contain a merge commit")
