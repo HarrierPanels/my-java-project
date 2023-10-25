@@ -1,16 +1,10 @@
 pipeline {
+
     agent {
         label 'local1'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout your source code from your version control system
-                checkout scm
-            }
-        }
-
         stage('GitHub Webhook Check') {
             steps {
                 script {
@@ -19,7 +13,7 @@ pipeline {
                         def branch = githubEvent.getBranch()
                         if (branch == 'refs/heads/dev') {
                             echo "Push event from 'dev' branch detected."
-                            currentBuild.resultIsWorse = 'FAILURE'
+                            currentBuild.result = 'FAILURE'
                         } else {
                             echo "Push event, but not from 'dev' branch. Ignoring."
                         }
@@ -29,5 +23,5 @@ pipeline {
                 }
             }
         }
-
+    }
 }
