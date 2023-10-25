@@ -6,7 +6,6 @@ pipeline {
                 script {
                         sh "echo fuckya"
                     }
-                }
             }
         }
         // Add more stages here
