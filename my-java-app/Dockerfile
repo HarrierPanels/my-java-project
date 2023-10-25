@@ -13,5 +13,8 @@ RUN apt-get update && apt-get install -y openjdk-11-jdk
 # Compile your Java code
 RUN javac /app/src/main/java/com/example/MyApp.java
 
+# Expose port 80
+EXPOSE 80
+
 # Run your Java application
 CMD ["java", "-cp", "/app/src/main/java", "com.example.MyApp"]
