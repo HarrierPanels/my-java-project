@@ -53,7 +53,7 @@ pipeline {
                         sh '''
                             echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin
                         '''
-                        // Push image
+                        // Push image to Docker Hub
                         sh "docker push harrierpanels/myapp:${buildVersion}"
                     }
                 }
