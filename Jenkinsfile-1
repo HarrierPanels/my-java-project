@@ -3,6 +3,14 @@ pipeline {
         label 'local1'
     }
 
+    parameters {
+        choice(
+            name: 'VERSION',
+            choices: '',
+            description: 'Select a version to deploy'
+        )
+    }
+
     stages {
         stage('Fetch Docker Hub Tags') {
             steps {
@@ -23,14 +31,7 @@ pipeline {
                         def availableVersions = tags.results.collect { it.name }
 
                         // Set the choices for the VERSION parameter
-                        def versionChoices = availableVersions.join('\n')
-
-                        // Define the parameters for version selection
-                        choice(
-                            choices: versionChoices,
-                            description: 'Version number',
-                            name: 'VERSION'
-                        )
+                        currentBuild.setBuildParameters([VERSION: availableVersions.join('\n')])
                     } else {
                         error("Failed to fetch Docker Hub tags: ${response.status} - ${response.content}")
                     }
@@ -40,8 +41,8 @@ pipeline {
 
         stage('Build and Deploy') {
             steps {
-                echo 'This is where you would add your build and deployment steps.'
-                echo 'Selected version: ${VERSION}'
+                echo "Selected version: ${params.VERSION}"
+                // Add your build and deployment steps here using the selected version
             }
         }
     }
