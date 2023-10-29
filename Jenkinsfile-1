@@ -6,7 +6,7 @@ pipeline {
     parameters {
         choice(
             name: 'VERSION',
-            choices: '',
+            choices: 'defaultChoice1\ndefaultChoice2', // Add your default choices here
             description: 'Select a version to deploy'
         )
     }
@@ -15,23 +15,20 @@ pipeline {
         stage('Fetch Docker Hub Tags') {
             steps {
                 script {
-                    // Define the Docker Hub image name
-                    def dockerHubImageName = 'harrierpanels/myapp' // Replace with your Docker Hub image
-
-                    // Make an HTTP GET request to fetch tags
+                    // Fetch available versions from Docker Hub
                     def response = httpRequest(
-                        url: "https://hub.docker.com/v2/repositories/${dockerHubImageName}/tags/",
+                        url: 'https://hub.docker.com/v2/repositories/harrierpanels/myapp/tags/',
                         httpMode: 'GET'
                     )
 
                     // Check if the request was successful
                     if (response.status == 200) {
-                        // Parse the JSON response to get available tags
                         def tags = evaluateJson(response.content)
                         def availableVersions = tags.results.collect { it.name }
 
-                        // Set the choices for the VERSION parameter
-                        currentBuild.setBuildParameters([VERSION: availableVersions.join('\n')])
+                        // Update the 'VERSION' parameter with dynamically fetched choices
+                        def updatedChoices = availableVersions.join('\n')
+                        currentBuild.setBuildParameters([VERSION: updatedChoices])
                     } else {
                         error("Failed to fetch Docker Hub tags: ${response.status} - ${response.content}")
                     }
@@ -41,8 +38,8 @@ pipeline {
 
         stage('Build and Deploy') {
             steps {
-                echo "Selected version: ${params.VERSION}"
-                // Add your build and deployment steps here using the selected version
+                echo "This is where you would add your build and deployment steps."
+                echo "Selected version: \${VERSION}"
             }
         }
     }
