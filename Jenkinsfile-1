@@ -41,6 +41,8 @@ pipeline {
         stage('Build and Deploy') {
             steps {
                 // Continue with your build and deployment steps
+                echo "This is where you would add your build and deployment steps."
+                echo "Selected version: \${VERSION}"
             }
         }
     }
