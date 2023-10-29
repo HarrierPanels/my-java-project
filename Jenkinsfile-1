@@ -1,41 +1,21 @@
 pipeline {
     agent {
-        label 'aws2023'
-    }
-
-    parameters {
-        choice(
-            name: 'VERSION',
-            choices: '', // Empty initial choices
-            description: 'Select a version to deploy'
-        )
+        label 'local1'
     }
 
     stages {
         stage('Fetch Docker Hub Tags') {
             steps {
                 script {
-                    // Fetch available versions from Docker Hub
-                    def response = httpRequest(
-                        url: 'https://hub.docker.com/v2/repositories/harrierpanels/myapp/tags/',
-                        httpMode: 'GET'
-                    )
+                    def repository = 'harrierpanels/myapp'
+                    def url = "https://hub.docker.com/v2/repositories/${repository}/tags"
+                    def response = sh(script: "curl -s ${url}", returnStatus: true, returnStdout: true)
 
-                    // Check if the request was successful
-                    if (response.status == 200) {
-                        def tags = evaluateJson(response.content)
-                        def availableVersions = tags.results.collect { it.name }
-
-                        // Use 'input' to prompt for version selection
-                        def updatedChoices = availableVersions.join('\n')
-                        updatedChoices = updatedChoices.replaceAll("\n", " ") // Replace newlines with spaces
-                        input(
-                            id: 'userInput',
-                            message: 'Select a version to deploy',
-                            parameters: [choice(name: 'VERSION', choices: updatedChoices, description: 'Select a version to deploy')]
-                        )
+                    if (response == 0) {
+                        def tags = new groovy.json.JsonSlurper().parseText(response.stdout).results.name
+                        env.VERSION = input message: 'Select Version', parameters: [choice(choices: tags.join('\n'), description: 'Choose a version', name: 'VERSION')]
                     } else {
-                        error("Failed to fetch Docker Hub tags: ${response.status} - ${response.content}")
+                        error("Failed to fetch Docker Hub tags: ${response.stderr}")
                     }
                 }
             }
@@ -43,14 +23,10 @@ pipeline {
 
         stage('Build and Deploy') {
             steps {
-                echo "This is where you would add your build and deployment steps."
-                echo "Selected version: ${params.VERSION}"
+                echo "Selected version: ${env.VERSION}"
+                // Continue with your build and deployment steps
             }
         }
     }
 }
 
-def evaluateJson(json) {
-    def jsonSlurper = new groovy.json.JsonSlurper()
-    return jsonSlurper.parseText(json)
-}
