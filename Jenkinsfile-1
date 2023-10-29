@@ -24,8 +24,8 @@ pipeline {
         stage('Build and Deploy') {
             steps {
                 echo "Selected version: ${env.VERSION}"
-                sh "docker pull harrierpanels/myapp:${env.VERSION}"
-                sh "docker run -d -p 8080:8080 --name myapp harrierpanels/myapp:${env.VERSION}"
+                //sh "docker pull harrierpanels/myapp:${env.VERSION}"
+                //sh "docker run -d -p 8080:8080 --name myapp harrierpanels/myapp:${env.VERSION}"
             }
         }
 
