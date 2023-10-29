@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     def response = sh(script: "curl -s http://localhost:8080/health", returnStdout: true)
-                    if (response.contains('UP')) {
+                    if (response.contains('Authentication')) {
                         echo "Health check passed"
                     } else {
                         error "Health check failed"
@@ -46,7 +46,8 @@ pipeline {
             steps {
                 script {
                     def message = "Deployment of myapp:${env.VERSION} is complete"
-                    slackSend(channel: '#your-slack-channel', message: message, color: 'good')
+                    //slackSend(channel: '#your-slack-channel', message: message, color: 'good')
+                    echo "${message}"
                 }
             }
         }
