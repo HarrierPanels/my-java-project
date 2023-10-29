@@ -19,7 +19,7 @@ pipeline {
                     // Check if the request was successful
                     if (response.status == 200) {
                         // Parse the JSON response to get available tags
-                        def tags = readJSON text: response.content
+                        def tags = evaluateJson(response.content)
                         def availableVersions = tags.results.collect { it.name }
 
                         // Set the choices for the VERSION parameter
@@ -40,10 +40,14 @@ pipeline {
 
         stage('Build and Deploy') {
             steps {
-                // Continue with your build and deployment steps
                 echo "This is where you would add your build and deployment steps."
                 echo "Selected version: \${VERSION}"
             }
         }
     }
+}
+
+def evaluateJson(json) {
+    def jsonSlurper = new groovy.json.JsonSlurper()
+    return jsonSlurper.parseText(json)
 }
