@@ -26,14 +26,13 @@ pipeline {
                         def tags = evaluateJson(response.content)
                         def availableVersions = tags.results.collect { it.name }
 
-                        // Update the 'VERSION' parameter with dynamically fetched choices
-                        def updatedChoices = availableVersions.join('\n')
-                        
                         // Use 'input' to prompt for version selection
+                        def updatedChoices = availableVersions.join('\n')
+                        updatedChoices = updatedChoices.replaceAll("\n", " ") // Replace newlines with spaces
                         input(
                             id: 'userInput',
                             message: 'Select a version to deploy',
-                            parameters: [choice(name: 'VERSION', choices: updatedChoices)]
+                            parameters: [choice(name: 'VERSION', choices: updatedChoices, description: 'Select a version to deploy')]
                         )
                     } else {
                         error("Failed to fetch Docker Hub tags: ${response.status} - ${response.content}")
@@ -55,4 +54,3 @@ def evaluateJson(json) {
     def jsonSlurper = new groovy.json.JsonSlurper()
     return jsonSlurper.parseText(json)
 }
-
