@@ -55,3 +55,4 @@ def evaluateJson(json) {
     def jsonSlurper = new groovy.json.JsonSlurper()
     return jsonSlurper.parseText(json)
 }
+
