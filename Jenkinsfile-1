@@ -6,7 +6,7 @@ pipeline {
     parameters {
         choice(
             name: 'VERSION',
-            choices: '110\n109', // Add your default choices here
+            choices: '', // Empty initial choices
             description: 'Select a version to deploy'
         )
     }
@@ -28,7 +28,13 @@ pipeline {
 
                         // Update the 'VERSION' parameter with dynamically fetched choices
                         def updatedChoices = availableVersions.join('\n')
-                        currentBuild.setBuildParameters([VERSION: updatedChoices])
+                        
+                        // Use 'input' to prompt for version selection
+                        input(
+                            id: 'userInput',
+                            message: 'Select a version to deploy',
+                            parameters: [choice(name: 'VERSION', choices: updatedChoices)]
+                        )
                     } else {
                         error("Failed to fetch Docker Hub tags: ${response.status} - ${response.content}")
                     }
@@ -39,7 +45,7 @@ pipeline {
         stage('Build and Deploy') {
             steps {
                 echo "This is where you would add your build and deployment steps."
-                echo "Selected version: \${VERSION}"
+                echo "Selected version: ${params.VERSION}"
             }
         }
     }
