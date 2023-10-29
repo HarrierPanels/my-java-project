@@ -1,37 +1,46 @@
 pipeline {
     agent {
-        label 'aws2023'
+        label 'local1'
     }
 
-        stage('Build Docker Image') {
+    stages {
+        stage('Fetch Docker Hub Tags') {
             steps {
                 script {
-                    // Build your Docker image as needed
-                    sh 'docker build -t myapp my-java-app/.'
+                    // Define the Docker Hub image name
+                    def dockerHubImageName = 'harrierpanels/myapp' // Replace with your Docker Hub image
+
+                    // Make an HTTP GET request to fetch tags
+                    def response = httpRequest(
+                        url: "https://hub.docker.com/v2/repositories/${dockerHubImageName}/tags/",
+                        httpMode: 'GET'
+                    )
+
+                    // Check if the request was successful
+                    if (response.status == 200) {
+                        // Parse the JSON response to get available tags
+                        def tags = readJSON text: response.content
+                        def availableVersions = tags.results.collect { it.name }
+
+                        // Set the choices for the VERSION parameter
+                        def versionChoices = availableVersions.join('\n')
+
+                        // Define the parameters for version selection
+                        choice(
+                            choices: versionChoices,
+                            description: 'Version number',
+                            name: 'VERSION'
+                        )
+                    } else {
+                        error("Failed to fetch Docker Hub tags: ${response.status} - ${response.content}")
+                    }
                 }
             }
         }
 
-        stage('Tag and Push Docker Image') {
+        stage('Build and Deploy') {
             steps {
-                script {
-                    // Tag the Docker image
-                    // Define Docker Hub credentials using a specific credential ID
-                    // Log in to Docker Hub using the Docker Hub credentials
-                    // Determine the build version based on the Jenkins build environment
-                    def buildVersion = env.BUILD_NUMBER ?: 'latest'
-                    // Tag and push the Docker image
-                    sh "docker tag myapp:latest harrierpanels/myapp:$buildVersion"
-                    sh "docker tag myapp:latest harrierpanels/myapp:latest"
-                    withCredentials([usernamePassword(credentialsId: 'DockerHubCredentials', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
-                        // Use input to securely provide the password
-                        sh '''
-                            echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin
-                        '''
-                        // Push image to Docker Hub
-                        sh "docker push harrierpanels/myapp:${buildVersion}"
-                    }
-                }
+                // Continue with your build and deployment steps
             }
         }
     }
