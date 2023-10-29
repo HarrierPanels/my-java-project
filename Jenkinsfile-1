@@ -9,13 +9,13 @@ pipeline {
                 script {
                     def repository = 'harrierpanels/myapp'
                     def url = "https://hub.docker.com/v2/repositories/${repository}/tags"
-                    def response = sh(script: "curl -s ${url}", returnStatus: true, returnStdout: true)
+                    def response = sh(script: "curl -s ${url}", returnStdout: true)
 
-                    if (response == 0) {
-                        def tags = new groovy.json.JsonSlurper().parseText(response.stdout).results.name
+                    if (response) {
+                        def tags = new groovy.json.JsonSlurper().parseText(response).results.name
                         env.VERSION = input message: 'Select Version', parameters: [choice(choices: tags, description: 'Choose a version', name: 'VERSION')]
                     } else {
-                        error("Failed to fetch Docker Hub tags: ${response.stderr}")
+                        error("Failed to fetch Docker Hub tags")
                     }
                 }
             }
@@ -24,8 +24,8 @@ pipeline {
         stage('Build and Deploy') {
             steps {
                 echo "Selected version: ${env.VERSION}"
-                //sh "docker pull harrierpanels/myapp:${env.VERSION}"
-                //sh "docker run -d -p 8080:8080 --name myapp harrierpanels/myapp:${env.VERSION}"
+                sh "docker pull harrierpanels/myapp:${env.VERSION}"
+                sh "docker run -d -p 8080:8080 --name myapp harrierpanels/myapp:${env.VERSION}"
             }
         }
 
