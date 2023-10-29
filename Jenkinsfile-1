@@ -13,7 +13,7 @@ pipeline {
 
                     if (response == 0) {
                         def tags = new groovy.json.JsonSlurper().parseText(response.stdout).results.name
-                        env.VERSION = input message: 'Select Version', parameters: [choice(choices: tags.join('\n'), description: 'Choose a version', name: 'VERSION')]
+                        env.VERSION = input message: 'Select Version', parameters: [choice(choices: tags, description: 'Choose a version', name: 'VERSION')]
                     } else {
                         error("Failed to fetch Docker Hub tags: ${response.stderr}")
                     }
@@ -24,9 +24,31 @@ pipeline {
         stage('Build and Deploy') {
             steps {
                 echo "Selected version: ${env.VERSION}"
-                // Continue with your build and deployment steps
+                //sh "docker pull harrierpanels/myapp:${env.VERSION}"
+                //sh "docker run -d -p 8080:8080 --name myapp harrierpanels/myapp:${env.VERSION}"
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                script {
+                    def response = sh(script: "curl -s http://localhost:8080/health", returnStdout: true)
+                    if (response.contains('UP')) {
+                        echo "Health check passed"
+                    } else {
+                        error "Health check failed"
+                    }
+                }
+            }
+        }
+
+        stage('Send Notifications') {
+            steps {
+                script {
+                    def message = "Deployment of myapp:${env.VERSION} is complete"
+                    slackSend(channel: '#your-slack-channel', message: message, color: 'good')
+                }
             }
         }
     }
 }
-
