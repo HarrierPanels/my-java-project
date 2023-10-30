@@ -2,14 +2,16 @@ pipeline {
     agent {
         label 'local1'
     }
-    environment {
-        AWS_CREDS = credentials('aws-creds')
-    }
-
+    //environment {
+      //  AWS_CREDS = credentials('aws-creds')
+    //}
     stages {
         stage('Example AWS') {
             steps {
                 sh 'aws --version'
+                withCredentials([<object of type com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding>]) {
+                    sh 'aws ec2 describe-instances'
+                }
                 sh 'aws ec2 describe-instances'
             }
         }
