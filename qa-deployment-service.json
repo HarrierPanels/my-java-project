@@ -1,5 +1,5 @@
 {
-  "family": "myapp-fargate",
+  "family": "qa-fargate",
   "containerDefinitions": [
     {
       "name": "myapp",
