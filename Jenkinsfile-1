@@ -2,53 +2,15 @@ pipeline {
     agent {
         label 'local1'
     }
+    environment {
+        AWS_CREDS = credentials('aws-creds')
+    }
 
     stages {
-        stage('Fetch Docker Hub Tags') {
+        stage('Example AWS') {
             steps {
-                script {
-                    def repository = 'harrierpanels/myapp'
-                    def url = "https://hub.docker.com/v2/repositories/${repository}/tags"
-                    def response = sh(script: "curl -s ${url}", returnStdout: true)
-
-                    if (response) {
-                        def tags = new groovy.json.JsonSlurper().parseText(response).results.name
-                        env.VERSION = input message: 'Select Version', parameters: [choice(choices: tags, description: 'Choose a version', name: 'VERSION')]
-                    } else {
-                        error("Failed to fetch Docker Hub tags")
-                    }
-                }
-            }
-        }
-
-        stage('Build and Deploy') {
-            steps {
-                echo "Selected version: ${env.VERSION}"
-                //sh "docker pull harrierpanels/myapp:${env.VERSION}"
-                //sh "docker run -d -p 8080:8080 --name myapp harrierpanels/myapp:${env.VERSION}"
-            }
-        }
-
-        stage('Health Check') {
-            steps {
-                script {
-                    def response = sh(script: "curl -s http://localhost:8080/health", returnStdout: true)
-                    if (response.contains('Authentication')) {
-                        echo "Health check passed"
-                    } else {
-                        error "Health check failed"
-                    }
-                }
-            }
-        }
-
-        stage('Send Notifications') {
-            steps {
-                script {
-                    def message = "Deployment of myapp:${env.VERSION} is complete"
-                    //slackSend(channel: '#your-slack-channel', message: message, color: 'good')
-                    echo "${message}"
-                }
+                sh 'aws --version"'
+                sh 'aws ec2 describe-instances'
             }
         }
     }
