@@ -106,12 +106,17 @@ pipeline {
             }
             steps {
                 script {
-                    def response = sh(script: "curl -s http://${env.PUB_IP}", returnStdout: true)
-                    if (response.contains('Harrier')) {
-                        echo "Health check passed"
-                    } else {
-                        error "Health check failed"
+                    def startTime = currentBuild.startTimeInMillis
+                    def timeout = 5 * 60 * 1000 // 5 minutes in milliseconds
+                    def response = ''
+                    while (!response.contains('Harrier')) {
+                        if (currentBuild.duration > timeout) {
+                            error "Health check timed out after ${timeout / 1000 / 60} minutes"
+                        }
+                        response = sh(script: "curl -s http://${env.PUB_IP}", returnStdout: true)
+                        sleep 10 // wait 10 seconds before trying again
                     }
+                    echo "Health check passed"
                 }
             }
         }
