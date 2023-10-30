@@ -76,7 +76,11 @@ pipeline {
                     } else if (env.ENVIRONMENT == 'qa') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
                         sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
-                        sh "cat qa-deployment-service.json"
+
+                        def sg = sh(script: 'aws ec2 describe-security-groups --filters "Name=group-name,Values=Secjen" --query "SecurityGroups[0].GroupId" --output text', returnStdout: true).trim()
+                        def subnet = sh(script: 'aws ec2 describe-subnets --filters "Name=vpc-id,Values=$(aws ec2 describe-vpcs --filters "Name=isDefault,Values=true" --query "Vpcs[0].VpcId" --output text)" --query "Subnets[0].SubnetId" --output text', returnStdout: true).trim()
+
+                        sh "aws ecs create-service --cluster qa-cluster --service-name qa-service --task-definition qa-fargate --desired-count 1 --launch-type 'FARGATE' --network-configuration 'awsvpcConfiguration={subnets=[${subnet}],securityGroups=[${sg}],assignPublicIp=ENABLED}'"
                         } else {
                             error "Failed to retrieve public IP address"
                         }
