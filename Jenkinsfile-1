@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'local1'
+        label 'aws2023'
     }
 
     environment {
@@ -60,9 +60,9 @@ pipeline {
                             // Wait for the LoadBalancer to have an external IP
                             def lbStatus = ''
                             while (lbStatus != 'active' || lbExternalIp.isEmpty()) {
-                                lbStatus = sh(script: "aws elbv2 describe-load-balancers --names myapp-service -q 'LoadBalancers[0].State.Code' --output text", returnStatus: true, returnStdout: true).trim()
+                                lbStatus = sh(script: "aws elbv2 describe-load-balancers --names dev-service -q 'LoadBalancers[0].State.Code' --output text", returnStatus: true, returnStdout: true).trim()
                                 if (lbStatus == 'active') {
-                                    lbExternalIp = sh(script: "aws elbv2 describe-load-balancers --names myapp-service --query 'LoadBalancers[0].DNSName' --output text", returnStatus: true, returnStdout: true).trim()
+                                    lbExternalIp = sh(script: "aws elbv2 describe-load-balancers --names dev-service --query 'LoadBalancers[0].DNSName' --output text", returnStatus: true, returnStdout: true).trim()
                                 } else {
                                     sleep 30  // Sleep for 30 seconds and then check again
                                 }
@@ -99,6 +99,23 @@ pipeline {
                     }
             }
         }
+
+        stage('Health Check') {
+            when {
+                expression { env.ENVIRONMENT == 'dev' || env.ENVIRONMENT == 'qa' }
+            }
+            steps {
+                script {
+                    def response = sh(script: "curl -s http://${env.PUB_IP}", returnStdout: true)
+                    if (response.contains('Harrier')) {
+                        echo "Health check passed"
+                    } else {
+                        error "Health check failed"
+                    }
+                }
+            }
+        }
+
         stage('Send Notifications') {
             steps {
                 script {
