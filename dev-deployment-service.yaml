@@ -14,7 +14,7 @@ spec:
         deploy: dev
     spec:
       containers:
-        - name: myapp-container
+        - name: myapp
           image: harrierpanels/myapp:latest
 
 ---
