@@ -8,6 +8,14 @@ pipeline {
     }
 
     stages {
+
+        stage('Checkout') {
+            steps {
+                // Checkout your source code from your version control system
+                checkout scm
+            }
+        }
+
         stage('Fetch Docker Hub Tags') {
             steps {
                 script {
@@ -25,19 +33,42 @@ pipeline {
             }
         }
 
-        stage('Build and Deploy') {
+        stage('Select Environment') {
             steps {
-                echo "Selected version: ${env.VERSION}"
-                //sh "docker pull harrierpanels/myapp:${env.VERSION}"
-                //sh "docker run -d -p 8080:8080 --name myapp harrierpanels/myapp:${env.VERSION}"
+                script {
+                    env.ENVIRONMENT = input message: 'Select Environment', parameters: [choice(choices: 'dev\nqa', description: 'Choose an environment', name: 'ENVIRONMENT')]
+                }
+            }
+        }
+
+        stage('Deploy to Environment') {
+            when {
+                expression { env.ENVIRONMENT == 'dev' || env.ENVIRONMENT == 'qa' }
+            }
+            steps {
+                script {
+                    if (env.ENVIRONMENT == 'dev') {
+                        echo "${env.VERSION} chosen for ${env.ENVIRONMENT}! "
+                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' dev-deployment-service.yaml"
+                    } else if (env.ENVIRONMENT == 'qa') {
+                        echo "${env.VERSION} chosen for ${env.ENVIRONMENT}! "
+                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
+                        } else {
+                            error "Failed to retrieve public IP address"
+                        }
+                    }
+                }
             }
         }
 
         stage('Health Check') {
+            when {
+                expression { env.ENVIRONMENT == 'dev' || env.ENVIRONMENT == 'qa' }
+            }
             steps {
                 script {
-                    def response = sh(script: "curl -s http://localhost:8080/health", returnStdout: true)
-                    if (response.contains('Authentication')) {
+                    def response = sh(script: "curl -s http://google.com", returnStdout: true)
+                    if (response.contains('UP')) {
                         echo "Health check passed"
                     } else {
                         error "Health check failed"
@@ -49,8 +80,7 @@ pipeline {
         stage('Send Notifications') {
             steps {
                 script {
-                    def message = "Deployment of myapp:${env.VERSION} is complete"
-                    //slackSend(channel: '#your-slack-channel', message: message, color: 'good')
+                    def message = "Deployment of myapp:${env.VERSION} to ${env.ENVIRONMENT} environment is complete"
                     echo "${message}"
                 }
             }
