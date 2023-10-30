@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-deployment
+  namespace: dev-namespace
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      deploy: dev
+  template:
+    metadata:
+      labels:
+        deploy: dev
+    spec:
+      containers:
+        - name: myapp-container
+          image: harrierpanels/myapp:latest
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-service
+  namespace: dev-namespace
+spec:
+  selector:
+    deploy: dev
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80  # port 80
+  type: LoadBalancer

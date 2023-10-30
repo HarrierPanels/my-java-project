@@ -1,0 +1,25 @@
+{
+  "family": "myapp-fargate",
+  "containerDefinitions": [
+    {
+      "name": "myapp",
+      "image": "harrierpanels/myapp:latest",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [],
+      "mountPoints": [],
+      "volumesFrom": []
+    }
+  ],
+  "executionRoleArn": "arn:aws:iam::555637368026:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "cpu": "256",
+  "memory": "512"
+}
