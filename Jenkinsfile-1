@@ -49,10 +49,14 @@ pipeline {
             steps {
                 script {
                     if (env.ENVIRONMENT == 'dev') {
+                        def region = 'us-east-1'
+                        def dev_cluster = 'dev-cluster'
+                        def file = 'dev-deployment-service.yaml'
+                        def dev_service = 'dev-service'
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
-                        sh "aws eks update-kubeconfig --region us-east-1 --name dev-cluster"
-                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' dev-deployment-service.yaml"
-                        sh "kubectl apply -f dev-deployment-service.yaml"
+                        sh "aws eks update-kubeconfig --region ${region} --name ${dev_cluster}"
+                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' ${file}"
+                        sh "kubectl apply -f ${file}"
 
                         // Wait for the LoadBalancer to be assigned an external IP
                         echo "Waiting for the LoadBalancer to be assigned an external IP..."
@@ -61,9 +65,9 @@ pipeline {
                             // Wait for the LoadBalancer to have an external IP
                             def lbStatus = ''
                             while (lbStatus != 'active' || lbExternalIp.isEmpty()) {
-                                lbStatus = sh(script: "aws elbv2 describe-load-balancers --names dev-service -q 'LoadBalancers[0].State.Code' --output text", returnStatus: true, returnStdout: true).trim()
+                                lbStatus = sh(script: "aws elbv2 describe-load-balancers --names ${dev_service} -q 'LoadBalancers[0].State.Code' --output text", returnStatus: true, returnStdout: true).trim()
                                 if (lbStatus == 'active') {
-                                    lbExternalIp = sh(script: "aws elbv2 describe-load-balancers --names dev-service --query 'LoadBalancers[0].DNSName' --output text", returnStatus: true, returnStdout: true).trim()
+                                    lbExternalIp = sh(script: "aws elbv2 describe-load-balancers --names ${dev_service} --query 'LoadBalancers[0].DNSName' --output text", returnStatus: true, returnStdout: true).trim()
                                 } else {
                                     sleep 30  // Sleep for 30 seconds and then check again
                                 }
@@ -75,20 +79,24 @@ pipeline {
                             error "Failed to retrieve public IP address"
                         }
                     } else if (env.ENVIRONMENT == 'qa') {
+                        def qa_cluster = 'qa-cluster'
+                        def file = 'qa-deployment-service.json'
+                        def qa_service = 'qa-service'
+                        def task = 'qa-fargate'
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
-                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
+                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' ${file}"
 
                         def sg = sh(script: 'aws ec2 describe-security-groups --filters "Name=group-name,Values=Secjen" --query "SecurityGroups[0].GroupId" --output text', returnStdout: true).trim()
                         def subnet = sh(script: 'aws ec2 describe-subnets --filters "Name=vpc-id,Values=$(aws ec2 describe-vpcs --filters "Name=isDefault,Values=true" --query "Vpcs[0].VpcId" --output text)" --query "Subnets[0].SubnetId" --output text', returnStdout: true).trim()
 
-                        sh "aws ecs create-service --cluster qa-cluster --service-name qa-service --task-definition qa-fargate --desired-count 1 --launch-type 'FARGATE' --network-configuration 'awsvpcConfiguration={subnets=[${subnet}],securityGroups=[${sg}],assignPublicIp=ENABLED}'"
-                        def response = sh(script: "aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp'", returnStdout: true)
+                        sh "aws ecs create-service --cluster ${qa_cluster} --service-name ${qa_service} --task-definition ${task} --desired-count 1 --launch-type 'FARGATE' --network-configuration 'awsvpcConfiguration={subnets=[${subnet}],securityGroups=[${sg}],assignPublicIp=ENABLED}'"
+                        def response = sh(script: "aws ecs describe-services --cluster ${qa_cluster} --services ${qa_service} --query 'services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp'", returnStdout: true)
                         if (response.contains('true')) {
                             // Get the subnet ID
-                            def subnetId = sh(script: "aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.subnets[0]' --output text", returnStdout: true).trim()
+                            def subnetId = sh(script: "aws ecs describe-services --cluster ${qa_cluster} --services ${qa_service} --query 'services[0].networkConfiguration.awsvpcConfiguration.subnets[0]' --output text", returnStdout: true).trim()
                     
                             // Get the private IP address
-                            def privateIp = sh(script: "aws ecs describe-tasks --cluster qa-cluster --tasks $(aws ecs list-tasks --cluster qa-cluster --service-name qa-service --query 'taskArns[0]' --output text) --query 'tasks[0].attachments[0].details[?name==\\\"privateIPv4Address\\\"].value' --output text", returnStdout: true).trim()
+                            def privateIp = sh(script: "aws ecs describe-tasks --cluster ${qa_cluster} --tasks $(aws ecs list-tasks --cluster ${qa_cluster} --service-name ${qa_service} --query 'taskArns[0]' --output text) --query 'tasks[0].attachments[0].details[?name==\\\"privateIPv4Address\\\"].value' --output text", returnStdout: true).trim()
 
                             // Get the public IP address
                             def pubIp = sh(script: "aws ec2 describe-network-interfaces --filters Name=subnet-id,Values=${subnetId} Name=private-ip-address,Values=${privateIp} --query 'NetworkInterfaces[0].Association.PublicIp' --output text", returnStdout: true).trim()
