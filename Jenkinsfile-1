@@ -40,6 +40,33 @@ pipeline {
                 }
             }
         }
-
+        stage('Deploy to Environment') {
+            when {
+                expression { env.ENVIRONMENT == 'dev' || env.ENVIRONMENT == 'qa' }
+            }
+            steps {
+                script {
+                    if (env.ENVIRONMENT == 'dev') {
+                        echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
+                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' dev-deployment-service.yaml"
+                        sh "cat dev-deployment-service.yaml"
+                    } else if (env.ENVIRONMENT == 'qa') {
+                        echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
+                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
+                        sh "cat qa-deployment-service.json"
+                        } else {
+                            error "Failed to retrieve public IP address"
+                        }
+                    }
+            }
+        }
+        stage('Send Notifications') {
+            steps {
+                script {
+                    def message = "Deployment of myapp:${env.VERSION} to ${env.ENVIRONMENT} environment is complete"
+                    echo "${message}"
+                }
+            }
+        }
     }
 }
