@@ -33,5 +33,13 @@ pipeline {
             }
         }
 
+        stage('Select Environment') {
+            steps {
+                script {
+                    env.ENVIRONMENT = input message: 'Select Environment', parameters: [choice(choices: 'dev\nqa', description: 'Choose an environment', name: 'ENVIRONMENT')]
+                }
+            }
+        }
+
     }
 }
