@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Example AWS') {
             steps {
-                sh 'aws --version"'
+                sh 'aws --version'
                 sh 'aws ec2 describe-instances'
             }
         }
