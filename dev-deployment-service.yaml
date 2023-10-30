@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev-namespace
+  labels:
+    deploy: dev
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
