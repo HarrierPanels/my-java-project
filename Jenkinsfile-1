@@ -4,6 +4,7 @@ pipeline {
     }
 
     environment {
+        // AWS credentials
         AWS_CREDS = credentials('aws-creds')
     }
 
@@ -19,6 +20,7 @@ pipeline {
         stage('Fetch Docker Hub Tags') {
             steps {
                 script {
+                    // Define Docker Hub variables
                     def repository = 'harrierpanels/myapp'
                     def url = "https://hub.docker.com/v2/repositories/${repository}/tags"
                     def response = sh(script: "curl -s ${url}", returnStdout: true)
