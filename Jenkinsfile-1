@@ -67,6 +67,7 @@ pipeline {
                                    --policy-arn arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy \
                                    --role-name myAmazonEKSNodeRole
                         '''
+                        sh "eksctl create nodegroup -f eks-dev-nodegroup-config.yaml --cluster dev-cluster" 
                         sh "kubectl apply -f dev-deployment-service.yaml"
 
                         // Wait for the LoadBalancer to be assigned an external IP
