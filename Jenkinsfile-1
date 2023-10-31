@@ -52,12 +52,18 @@ pipeline {
                 script {
                     if (env.ENVIRONMENT == 'dev') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
-                        sh "aws eks update-kubeconfig --region us-east-1 --name dev-cluster"
-                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' dev-deployment-service.yaml"
-                        sh "kubectl apply -f dev-deployment-service.yaml"
+                        //sh "aws eks update-kubeconfig --region us-east-1 --name dev-cluster"
+                        //sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' dev-deployment-service.yaml"
+                        //sh "kubectl apply -f dev-deployment-service.yaml"
 
                         // Wait for the LoadBalancer to be assigned an external IP
                         echo "Waiting for the LoadBalancer to be assigned an external IP..."
+                        while [ -z "$(kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}')" ]; do
+                            sleep 5
+                        done
+
+                        # Get the external IP of the LoadBalancer
+                        env.PUB_IP="$(kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}')"
 
                     } else if (env.ENVIRONMENT == 'qa') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
@@ -87,6 +93,27 @@ pipeline {
                             error "Failed to retrieve public IP address"
                         }
                     }
+                }
+            }
+        }
+
+        stage('Health Check') {
+            when {
+                expression { env.ENVIRONMENT == 'dev' || env.ENVIRONMENT == 'qa' }
+            }
+            steps {
+                script {
+                    def startTime = currentBuild.startTimeInMillis
+                    def timeout = 5 * 60 * 1000 // 5 minutes in milliseconds
+                    def response = ''
+                    while (!response.contains('Harrier')) {
+                        if (currentBuild.duration > timeout) {
+                            error "Health check timed out after ${timeout / 1000 / 60} minutes"
+                        }
+                        response = sh(script: "curl -s http://${env.PUB_IP}", returnStdout: true)
+                        sleep 10 // wait 10 seconds before trying again
+                    }
+                    echo "Health check passed"
                 }
             }
         }
