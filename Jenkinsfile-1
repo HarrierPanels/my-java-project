@@ -58,7 +58,7 @@ pipeline {
 
                         // Wait for the LoadBalancer to be assigned an external IP
                         echo "Waiting for the LoadBalancer to be assigned an external IP..."
-                        def lbExternalIp = ''
+                        def lbExternalIp = null
                         def timeoutMillis = currentBuild.startTimeInMillis + (5 * 60 * 1000) // 5 minutes timeout
 
                         while (lbExternalIp.isEmpty()) {
@@ -73,7 +73,7 @@ pipeline {
                                 sleep 5
                             }
                          }
-                        env.PUB_IP = lbExternalIp
+                         env.PUB_IP = lbExternalIp
                     } else if (env.ENVIRONMENT == 'qa') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
                         sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
