@@ -58,13 +58,12 @@ pipeline {
 
                         // Wait for the LoadBalancer to be assigned an external IP
                         echo "Waiting for the LoadBalancer to be assigned an external IP..."
-                        sh ''' while [ -z "$(kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}')" ]; do
-                                   sleep 5
-                               done
-                        '''
+                        while ( -z "$(kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}')" ) {
+                            sleep 5
+                        }
 
-                        # Get the external IP of the LoadBalancer
-                        env.PUB_IP="$(kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}')"
+                        // Get the external IP of the LoadBalancer
+                        env.PUB_IP = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true).trim()
 
                     } else if (env.ENVIRONMENT == 'qa') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
