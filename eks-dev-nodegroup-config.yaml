@@ -1,0 +1,22 @@
+apiVersion: eksctl.io/v1alpha5
+kind: NodeGroupConfig
+metadata:
+  name: dev-nodegroup
+  labels:
+    deploy: dev
+nodeGroup:
+  desiredCapacity: 2
+  instanceType: t3.medium
+  iam:
+    withAddonPolicies:
+      autoScaler: true
+  tags:
+    nodegroup-type: dev
+  availabilityZones: ["us-east-1a", "us-east-1b"]
+  privateNetworking: true
+  minSize: 1
+  maxSize: 5
+  volumeSize: 20
+  volumeType: gp2
+  amiFamily: AmazonLinux2
+  iamInstanceProfile: myAmazonEKSNodeRole
