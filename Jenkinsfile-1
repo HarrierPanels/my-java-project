@@ -69,7 +69,7 @@ pipeline {
                             def lbOutput = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true, returnStdout: true).trim()
                             if (lbOutput) {
                                 lbExternalIp = lbOutput
-                                echo "${lbExternalIp} fucks for ${lbOutput}:"
+                                //echo "${lbExternalIp} fucks for ${lbOutput}:"
                             } else {
                                 sleep 5
                             }
