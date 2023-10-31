@@ -76,7 +76,7 @@ pipeline {
                         def lbExternalIp = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true, returnStdout: true).toString().trim()
                         echo "fuckya ${lbExternalIp}"
 
-                        env.PUB_IP = lbExternalIp
+                        env.PUB_IP = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true, returnStdout: true).trim()
                     } else if (env.ENVIRONMENT == 'qa') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
                         sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
