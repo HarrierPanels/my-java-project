@@ -73,6 +73,11 @@ pipeline {
                             }
                         }
                         echo "fuckya ${lbExternalIp}"
+                        echo "Running: kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'"
+                        def lbExternalIp = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true, returnStdout: true).toString().trim()
+                        echo "lbExternalIp: ${lbExternalIp}"
+
+
 
                         env.PUB_IP = lbExternalIp
                     } else if (env.ENVIRONMENT == 'qa') {
