@@ -61,7 +61,7 @@ pipeline {
                         def lbExternalIp = null
                         def timeoutMillis = currentBuild.startTimeInMillis + (5 * 60 * 1000) // 5 minutes timeout
 
-                        while (lbExternalIp.isEmpty()) {
+                        while (lbExternalIp == null || lbExternalIp.trim() == "") {
                             if (System.currentTimeMillis() > timeoutMillis) {
                                 error "Timed out waiting for the LoadBalancer external IP"
                             }
