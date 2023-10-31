@@ -73,6 +73,7 @@ pipeline {
                                 sleep 5
                             }
                         }
+                        def lbExternalIp = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true, returnStdout: true).toString()
                         echo "fuckya ${lbExternalIp}"
 
                         env.PUB_IP = lbExternalIp
