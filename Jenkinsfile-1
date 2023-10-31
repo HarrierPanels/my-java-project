@@ -58,13 +58,21 @@ pipeline {
 
                         // Wait for the LoadBalancer to be assigned an external IP
                         echo "Waiting for the LoadBalancer to be assigned an external IP..."
-                        while ( -z "$(kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}')" ) {
-                            sleep 5
+                        def lbExternalIp = ''
+                        def timeoutMillis = currentBuild.startTimeInMillis + (5 * 60 * 1000) // 5 minutes timeout
+
+                        while (lbExternalIp.isEmpty()) {
+                            if (System.currentTimeMillis() > timeoutMillis) {
+                                error "Timed out waiting for the LoadBalancer external IP"
+                            }
+
+                            lbExternalIp = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true, returnStdout: true).trim()
+                            if (lbExternalIp.isEmpty()) {
+                                sleep 5
+                            }
                         }
 
-                        // Get the external IP of the LoadBalancer
-                        env.PUB_IP = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true).trim()
-
+                        env.PUB_IP = lbExternalIp
                     } else if (env.ENVIRONMENT == 'qa') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
                         sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
