@@ -66,7 +66,7 @@ pipeline {
                                 error "Timed out waiting for the LoadBalancer external IP"
                             }
 
-                            def lbExternalIp = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true, returnStdout: true).toString().trim()
+                            lbExternalIp = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true, returnStdout: true).toString()
                             echo "fuck ${lbExternalIp}"
                             sh "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'"
                             if (lbExternalIp.isEmpty()) {
