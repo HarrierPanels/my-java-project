@@ -52,9 +52,9 @@ pipeline {
                 script {
                     if (env.ENVIRONMENT == 'dev') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
-                        //sh "aws eks update-kubeconfig --region us-east-1 --name dev-cluster"
-                        //sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' dev-deployment-service.yaml"
-                        //sh "kubectl apply -f dev-deployment-service.yaml"
+                        sh "aws eks update-kubeconfig --region us-east-1 --name dev-cluster"
+                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' dev-deployment-service.yaml"
+                        sh "kubectl apply -f dev-deployment-service.yaml"
 
                         // Wait for the LoadBalancer to be assigned an external IP
                         echo "Waiting for the LoadBalancer to be assigned an external IP..."
