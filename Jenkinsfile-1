@@ -72,7 +72,7 @@ pipeline {
                             } else {
                                 sleep 5
                             }
-                        }
+                         }   
                         env.PUB_IP = lbExternalIp
                     } else if (env.ENVIRONMENT == 'qa') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
