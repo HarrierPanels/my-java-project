@@ -67,12 +67,12 @@ pipeline {
                             }
 
                             lbExternalIp = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStatus: true, returnStdout: true).toString().trim()
-                            echo fuck ${lbExternalIp}
+                            echo "fuck ${lbExternalIp}"
                             if (lbExternalIp.isEmpty()) {
                                 sleep 5
                             }
                         }
-                        echo fuckya ${lbExternalIp}
+                        echo "fuckya ${lbExternalIp}"
 
                         env.PUB_IP = lbExternalIp
                     } else if (env.ENVIRONMENT == 'qa') {
