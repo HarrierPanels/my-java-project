@@ -58,7 +58,7 @@ pipeline {
 
                         // Wait for the LoadBalancer to be assigned an external IP
                         echo "Waiting for the LoadBalancer to be assigned an external IP..."
-                        def lbExternalIp = null
+                        def lbExternalIp = ''
                         def timeoutMillis = currentBuild.startTimeInMillis + (5 * 60 * 1000) // 5 minutes timeout
 
                         while (lbExternalIp.isEmpty()) {
