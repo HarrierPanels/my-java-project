@@ -17,6 +17,23 @@ pipeline {
             }
         }
 
+        stage('Fetch Docker Hub Tags') {
+            steps {
+                script {
+                    // Define Docker Hub variables
+                    def repository = 'harrierpanels/myapp'
+                    def url = "https://hub.docker.com/v2/repositories/${repository}/tags"
+                    def response = sh(script: "curl -s ${url}", returnStdout: true)
+
+                    if (response) {
+                        def tags = new groovy.json.JsonSlurper().parseText(response).results.name
+                        env.VERSION = input message: 'Select Version', parameters: [choice(choices: tags, description: 'Choose a version', name: 'VERSION')]
+                    } else {
+                        error("Failed to fetch Docker Hub tags")
+                    }
+                }
+            }
+        }
 
         stage('Select Environment') {
             steps {
@@ -34,16 +51,75 @@ pipeline {
             steps {
                 script {
                     if (env.ENVIRONMENT == 'dev') {
-                        def lbExternalIp = sh(script: "aws ec2 describe-network-interfaces --filters Name=subnet-id,Values=subnet-0e41340a4d902effc Name=private-ip-address,Values=172.31.51.126 --query 'NetworkInterfaces[0].Association.PublicIp' --output text | tr -d '\\n'", returnStdout: true).trim()
+                        echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
+                        sh "aws eks update-kubeconfig --region us-east-1 --name dev-cluster"
+                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' dev-deployment-service.yaml"
+                        sh "kubectl apply -f dev-deployment-service.yaml"
 
+                        // Wait for the LoadBalancer to be assigned an external IP
+                        echo "Waiting for the LoadBalancer to be assigned an external IP..."
+                        def lbExternalIp = ''
+                        def timeoutMillis = currentBuild.startTimeInMillis + (5 * 60 * 1000) // 5 minutes timeout
+
+                        while (lbExternalIp.isEmpty()) {
+                            if (System.currentTimeMillis() > timeoutMillis) {
+                                error "Timed out waiting for the LoadBalancer external IP"
+                            }
+                            lbExternalIp = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
+                            if (lbExternalIp.isEmpty()) {
+                                sleep 5
+                            }
+                        }   
                         env.PUB_IP = lbExternalIp
                     } else if (env.ENVIRONMENT == 'qa') {
+                        echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
+                        // Create ECS role if not exists
+                        def roleName = 'ecsTaskExecutionRole'
+                        def roleExists = sh(script: "aws iam get-role --role-name $roleName", returnStatus: true) == 0
+                        if (!roleExists) {
+                            // Create ECS role
+                            sh "aws iam create-role --role-name ${roleName} --assume-role-policy-document '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ecs-tasks.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}'"
+                            sh "aws iam put-role-policy --role-name ${roleName} --policy-name ECSTaskExecutionRolePolicy --policy-document '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"ECSTaskExecutionRolePermissions\",\"Effect\":\"Allow\",\"Action\":[\"ecr:GetAuthorizationToken\",\"ecr:BatchCheckLayerAvailability\",\"ecr:GetDownloadUrlForLayer\",\"ecr:BatchGetImage\",\"ecs:RunTask\",\"ecs:StopTask\",\"logs:CreateLogGroup\",\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Resource\":\"*\"}]}'"
+                        }
+                        // Get the deployment json file ready
+                        def awsCallerId = sh(script: "aws sts get-caller-identity --query Account --output text | tr -d '\\n'", returnStdout: true)
+                        sh "sed -i 's/aws_account_id/${awsCallerId}/g' qa-deployment-service.json"
+                        sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
+                        // Register a Linux Task Definition
+                        sh "aws ecs register-task-definition --cli-input-json file://qa-deployment-service.json"
+                        // Define variables for deployment: Security group & Subnet
+                        def sg = sh(script: 'aws ec2 describe-security-groups --filters "Name=group-name,Values=Secjen" --query "SecurityGroups[0].GroupId" --output text', returnStdout: true).trim()
+                        def subnet = sh(script: 'aws ec2 describe-subnets --filters "Name=vpc-id,Values=$(aws ec2 describe-vpcs --filters "Name=isDefault,Values=true" --query "Vpcs[0].VpcId" --output text)" --query "Subnets[0].SubnetId" --output text', returnStdout: true).trim()
 
+                        // Deploy container
+                        sh "aws ecs create-service --cluster qa-cluster --service-name qa-service --task-definition qa-fargate --desired-count 1 --launch-type 'FARGATE' --network-configuration 'awsvpcConfiguration={subnets=[${subnet}],securityGroups=[${sg}],assignPublicIp=ENABLED}'"
+
+                        //def taskArn = sh(script: "aws ecs list-tasks --cluster qa-cluster --service qa-service --query 'taskArns[0]' --output text | tr -d '\\n'", returnStdout: true).trim()
+                        def taskArn = ""
+                        while (taskArn == "" || taskArn == "None") {
+                            taskArn = sh(script: "aws ecs list-tasks --cluster qa-cluster --service qa-service --query 'taskArns[0]' --output text | tr -d '\\n'", returnStdout: true).trim()
+                            if (taskArn == "" || taskArn == "None") {
+                                sleep 10 // wait for 10 seconds before trying again
+                            }
+                        }
+                        // Get the eni ID
+                        def eni = sh(script: "aws ecs describe-tasks --cluster qa-cluster --tasks ${taskArn} --query 'tasks[0].attachments[0].details[1].value' --output text | tr -d '\\n'", returnStdout: true).trim()
+
+                        def response = sh(script: "aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp'", returnStdout: true)
+                        if (response.contains('ENABLED')) {
+                            // Get the subnet ID
+                            def subnetId = sh(script: "aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.subnets[0]' --output text | tr -d '\\n'", returnStdout: true).trim()
+
+                            // Get the private IP address
+                            def privateIp = sh(script: "aws ec2 describe-network-interfaces --network-interface-ids ${eni} --query 'NetworkInterfaces[0].PrivateIpAddress' --output text | tr -d '\\n'", returnStdout: true).trim()
                             // Get the public IP address
-                          def pubIp = sh(script: "aws ec2 describe-network-interfaces --filters Name=subnet-id,Values=subnet-0e41340a4d902effc Name=private-ip-address,Values=172.31.51.126 --query 'NetworkInterfaces[0].Association.PublicIp' --output text | tr -d '\\n'", returnStdout: true).trim()
+                            def pubIp = sh(script: "aws ec2 describe-network-interfaces --filters Name=subnet-id,Values=${subnetId} Name=private-ip-address,Values=${privateIp} --query 'NetworkInterfaces[0].Association.PublicIp' --output text | tr -d '\\n'", returnStdout: true).trim()
 
-                          env.PUB_IP = pubIp
-                   }
+                            env.PUB_IP = pubIp
+                        } else {
+                            error "Failed to retrieve public IP address"
+                        }
+                    }
                 }
             }
         }
@@ -68,6 +144,7 @@ pipeline {
                 }
             }
         }
+
         stage('Send Notifications') {
             steps {
                 script {
