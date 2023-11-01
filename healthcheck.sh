@@ -3,7 +3,7 @@
 retry() {
     function="$@"
     count=0
-    max=5
+    max=30
     sleep=5
 
     while :; do
@@ -21,7 +21,7 @@ retry() {
 healthcheck() {
     curl -Ls "$1" | grep -E "$2" >/dev/null 2>&1
     [ $? -ne 0 ] && echo "Host unreachable" && return 1
-    echo "Host OK"
+    echo "Host UP"
 }
 
 # Health Check
