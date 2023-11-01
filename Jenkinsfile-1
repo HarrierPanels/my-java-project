@@ -125,41 +125,24 @@ pipeline {
         }
 
         stage('Health Check') {
+            options {
+                timeout(time: 180, unit: "SECONDS")
+            }
             when {
                 expression { env.ENVIRONMENT == 'dev' || env.ENVIRONMENT == 'qa' }
             }
             steps {
                 script {
-                    def maxRetries = 10
-                    def retryInterval = 10 // seconds
-                    def retries = 0
-
-                    def startTime = currentBuild.startTimeInMillis
-                    def timeout = 5 * 60 * 1000 // 5 minutes in milliseconds
                     def response = ''
-
-                    while (retries < maxRetries) {
-                        if (currentBuild.duration > timeout) {
-                            error "Health check timed out after ${timeout / 1000 / 60} minutes"
-                        }
-
-                        response = sh(script: "curl -s http://${env.PUB_IP}", returnStatus: true, returnStdout: true)
-                        if (response == 0 && (response.contains('Harrier') || response.contains('Maven'))) {
-                            echo "Health check passed"
-                            break
-                        } else {
-                            echo "Health check failed (retry ${retries + 1})"
-                            retries++
-                            sleep retryInterval
-                        }
-                    }   
-
-                    if (retries == maxRetries) {
-                        error "Health check failed after ${maxRetries} retries."
+                    while (!(response.contains('Harrier') || response.contains('Maven'))) {
+                        response = sh(script: "curl -s http://${env.PUB_IP}", returnStdout: true)
+                        sleep 10 // wait 10 seconds before trying again
                     }
+                    echo "Health check passed"
                 }
             }
         }
+
 
         stage('Send Notifications') {
             steps {
