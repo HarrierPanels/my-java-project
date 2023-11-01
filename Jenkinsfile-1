@@ -131,7 +131,7 @@ pipeline {
             steps {
                 script {
                     def startTime = currentBuild.startTimeInMillis
-                    def timeout = 5 * 60 * 1000 // 5 minutes in milliseconds
+                    def timeout = 25 * 60 * 1000 // 25 minutes in milliseconds
                     def response = ''
                     while (!(response.contains('Harrier') || response.contains('Maven'))) {
                         if (currentBuild.duration > timeout) {
