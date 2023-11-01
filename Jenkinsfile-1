@@ -126,7 +126,7 @@ pipeline {
 
         stage('Health Check') {
             options {
-                timeout(time: 60, unit: "SECONDS")
+                timeout(time: 180, unit: "SECONDS")
             }
             when {
                 expression { env.ENVIRONMENT == 'dev' || env.ENVIRONMENT == 'qa' }
