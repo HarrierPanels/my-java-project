@@ -82,7 +82,7 @@ pipeline {
                             sh "aws iam put-role-policy --role-name ${roleName} --policy-name ECSTaskExecutionRolePolicy --policy-document '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"ECSTaskExecutionRolePermissions\",\"Effect\":\"Allow\",\"Action\":[\"ecr:GetAuthorizationToken\",\"ecr:BatchCheckLayerAvailability\",\"ecr:GetDownloadUrlForLayer\",\"ecr:BatchGetImage\",\"ecs:RunTask\",\"ecs:StopTask\",\"logs:CreateLogGroup\",\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Resource\":\"*\"}]}'"
                         }
                         // Get the deployment json file ready
-                        def awsCallerId = sh(script: "aws sts get-caller-identity --query Account --output text", returnStdout: true)
+                        def awsCallerId = sh(script: "aws sts get-caller-identity --query Account --output text | tr -d '\\n'", returnStdout: true)
                         sh "sed -i 's/aws_account_id/${awsCallerId}/g' qa-deployment-service.json"
                         sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
                         // Register a Linux Task Definition
