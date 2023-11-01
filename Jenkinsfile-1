@@ -133,7 +133,7 @@ pipeline {
             }
             steps {
                 script {
-                    def response = sh(script: "curl -s http://${env.PUB_IP}", returnStdout: true)
+                    def response = ''
                     while (!(response.contains('Harrier') || response.contains('Maven'))) {
                         sh "curl -s http://${env.PUB_IP} 2>/dev/null"
                         sleep 10 // wait 10 seconds before trying again
