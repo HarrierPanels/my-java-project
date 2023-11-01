@@ -75,7 +75,7 @@ pipeline {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
                         // Create ECS role if not exists
                         def roleName = 'ecsTaskExecutionRole'
-                        def roleExists = sh(script: "aws iam get-role --role-name $roleName > /dev/null 2>&1; echo ${?}", returnStdout: true).trim() == '0'
+                        def roleExists = sh(script: "aws iam get-role --role-name $roleName > /dev/null 2>&1; echo \${?}", returnStdout: true).trim() == '0'
                         if (!roleExists) {
                             // Create ECS role
                             sh 'aws iam create-role --role-name ecsTaskExecutionRole --assume-role-policy-document \'{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"ecs-tasks.amazonaws.com"},"Action":"sts:AssumeRole"}]}\' // Create ECS role'
