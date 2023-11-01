@@ -57,7 +57,7 @@ pipeline {
                     def startTime = currentBuild.startTimeInMillis
                     def timeout = 5 * 60 * 1000 // 5 minutes in milliseconds
                     def response = ''
-                    while (!(response.contains('Maven'))) {
+                    while (!(response.contains('Harrier') || response.contains('Maven'))) {
                         if (currentBuild.duration > timeout) {
                             error "Health check timed out after ${timeout / 1000 / 60} minutes"
                         }
@@ -68,7 +68,6 @@ pipeline {
                 }
             }
         }
-
         stage('Send Notifications') {
             steps {
                 script {
