@@ -34,13 +34,13 @@ pipeline {
             steps {
                 script {
                     if (env.ENVIRONMENT == 'dev') {
-                        def lbExternalIp = sh(script: "ws ec2 describe-network-interfaces --filters Name=subnet-id,Values=subnet-0e41340a4d902effc Name=private-ip-address,Values=172.31.51.126 --query 'NetworkInterfaces[0].Association.PublicIp' --output text | tr -d '\\n'", returnStdout: true).trim()
+                        def lbExternalIp = sh(script: "aws ec2 describe-network-interfaces --filters Name=subnet-id,Values=subnet-0e41340a4d902effc Name=private-ip-address,Values=172.31.51.126 --query 'NetworkInterfaces[0].Association.PublicIp' --output text | tr -d '\\n'", returnStdout: true).trim()
 
                         env.PUB_IP = lbExternalIp
                     } else if (env.ENVIRONMENT == 'qa') {
 
                             // Get the public IP address
-                          def pubIp = sh(script: "ws ec2 describe-network-interfaces --filters Name=subnet-id,Values=subnet-0e41340a4d902effc Name=private-ip-address,Values=172.31.51.126 --query 'NetworkInterfaces[0].Association.PublicIp' --output text | tr -d '\\n'", returnStdout: true).trim()
+                          def pubIp = sh(script: "aws ec2 describe-network-interfaces --filters Name=subnet-id,Values=subnet-0e41340a4d902effc Name=private-ip-address,Values=172.31.51.126 --query 'NetworkInterfaces[0].Association.PublicIp' --output text | tr -d '\\n'", returnStdout: true).trim()
 
                           env.PUB_IP = pubIp
                    }
