@@ -65,14 +65,12 @@ pipeline {
                             if (System.currentTimeMillis() > timeoutMillis) {
                                 error "Timed out waiting for the LoadBalancer external IP"
                             }
-                            def lbOutput = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
-                            if (lbOutput) {
-                                lbExternalIp = lbOutput
-                            } else {
+                            lbExternalIp = sh(script: "kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
+                            if (lbExternalIp.isEmpty()) {
                                 sleep 5
                             }
-                        }
-                        env.PUB_IP = lburl
+                        }   
+                        env.PUB_IP = lbExternalIp
                     } else if (env.ENVIRONMENT == 'qa') {
                         echo "${env.VERSION} chosen for ${env.ENVIRONMENT}:"
                         sh "sed -i 's/harrierpanels\\/myapp:latest/harrierpanels\\/myapp:${env.VERSION}/g' qa-deployment-service.json"
