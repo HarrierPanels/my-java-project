@@ -126,16 +126,16 @@ pipeline {
 
         stage('Health Check') {
             options {
-                timeout(time: 180, unit: "SECONDS")
+                timeout(time: 60, unit: "SECONDS")
             }
             when {
                 expression { env.ENVIRONMENT == 'dev' || env.ENVIRONMENT == 'qa' }
             }
             steps {
                 script {
-                    def response = ''
+                    def response = sh(script: "curl -s http://${env.PUB_IP}", returnStdout: true)
                     while (!(response.contains('Harrier') || response.contains('Maven'))) {
-                        response = sh(script: "curl -s http://${env.PUB_IP}", returnStdout: true)
+                        sh "curl -s http://${env.PUB_IP} 2>/dev/null"
                         sleep 10 // wait 10 seconds before trying again
                     }
                     echo "Health check passed"
