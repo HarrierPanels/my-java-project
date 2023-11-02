@@ -149,4 +149,16 @@ pipeline {
             }
         }
     }
+
+    post {
+       // only triggered when blue or green sign
+       success {
+           echo "Container myapp:${env.VERSION} deployed successfully to ${env.ENVIRONMENT} environment - ${env.JOB_NAME} ${env.BUILD_NUMBER}"
+       }
+       // triggered when red sign
+       failure {
+           echo "Deployment of the container myapp:${env.VERSION} to ${env.ENVIRONMENT} environment failed  - ${env.JOB_NAME} ${env.BUILD_NUMBER}"
+       }
+    }	
+
 }
