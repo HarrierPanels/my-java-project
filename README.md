@@ -1,4 +1,4 @@
-<html><table><div id="main-panel" class="fullscreen"><a id="skip2content"></a><script>var timeZone = 'Etc/UTC';</script><div class="cbwf-stage-view"><div objecturl="/job/cd-pipeline/" fragcaption="cd-pipeline - Stage View" cbwf-controller="pipeline-staged" class="cbwf-widget cbwf-controller-applied pipeline-staged"><div><div id="pipeline-box">
+<div id="pipeline-box">
 <h2>cd-pipeline - Stage View</h2>
 <div class="table-box"><div class="table-viewPort">
 <table class="jobsTable" style="max-width:70em">
@@ -403,4 +403,4 @@
 
 </table>
 </div>
-</div></div></div></div><script src="/adjuncts/5e767724/org/jenkinsci/pipeline/stageview_adjunct.js" type="text/javascript"></script><link rel="stylesheet" href="/static/5e767724/plugin/pipeline-stage-view/jsmodules/stageview.css"></div><script>var timeZone = 'Etc/UTC';</script><div class="cbwf-stage-view"><div objecturl="/job/cd-pipeline/" cbwf-controller="remove-sidepanel" class="cbwf-widget cbwf-controller-applied remove-sidepanel"></div><link rel="stylesheet" href="/static/5e767724/plugin/pipeline-stage-view/jsmodules/stageview.css"></div></div></table></html>
+</div></div>
