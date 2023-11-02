@@ -150,4 +150,5 @@ pipeline {
                     message: "Deployment of the container myapp:${env.VERSION} to ${env.ENVIRONMENT} environment failed by ${env.JOB_NAME} No: ${env.BUILD_NUMBER}"
             }
         }
+
 }
