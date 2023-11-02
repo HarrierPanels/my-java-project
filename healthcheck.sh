@@ -3,7 +3,7 @@
 retry() {
     function="$@"
     count=0
-    max=30
+    max=60
     sleep=5
 
     while :; do
