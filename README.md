@@ -4,7 +4,7 @@
 <br>
 
 
-<!-- <div id="pipeline-box">
+<div><div id="pipeline-box">
 <h2>cd-pipeline - Stage View</h2>
 <div class="table-box"><div class="table-viewPort">
 <table class="jobsTable" style="max-width:70em">
@@ -409,4 +409,4 @@
 
 </table>
 </div>
-</div></div> -->
+</div></div></div>
