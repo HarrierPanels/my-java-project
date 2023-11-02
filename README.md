@@ -1,6 +1,6 @@
-[![CICD](https://img.shields.io/badge/HarrierPanels-CI%2FCD-blue)](./)
-[![EPAM](https://img.shields.io/badge/EPAM-Capstone%20Project-orange)](./)
-[![HitCount](https://hits.dwyl.com/HarrierPanels/sql.svg?style=flat&show=unique)](http://hits.dwyl.com/HarrierPanels/my-java-project)
+[![CICD](https://img.shields.io/badge/HarrierPanels-CD%2FPipeline-blue)](./)
+[![EPAM](https://img.shields.io/badge/EPAM-Jenkins%20Task-orange)](./)
+[![HitCount](https://hits.dwyl.com/HarrierPanels/my-java-project.svg?style=flat&show=unique)](http://hits.dwyl.com/HarrierPanels/my-java-project)
 <br>
 
 
