@@ -139,16 +139,15 @@ pipeline {
                 }
             }
         }
-
-        post {
-            success {
-                office365ConnectorSend webhookUrl: "https://epam.webhook.office.com/webhookb2/8dab633d-3412-4b31-992e-3e7f036cdd1f@b41b72d0-4e9f-4c26-8a69-f949f367c91d/JenkinsCI/e5dafaf8889d406aac4a0b87ca799c81/a70c25df-ac3b-4aa5-bee8-9b2306dd7016",
-                    message: "Container myapp:${env.VERSION} deployed successfully to ${env.ENVIRONMENT} environment by ${env.JOB_NAME} No: ${env.BUILD_NUMBER}"
-            }
-            failure {
-                office365ConnectorSend webhookUrl: "https://outlook.office.com/webhook/123456...",
-                    message: "Deployment of the container myapp:${env.VERSION} to ${env.ENVIRONMENT} environment failed by ${env.JOB_NAME} No: ${env.BUILD_NUMBER}"
-            }
-        }
+post {
+    success {
+        office365ConnectorSend webhookUrl: "https://epam.webhook.office.com/webhookb2/8dab633d-3412-4b31-992e-3e7f036cdd1f@b41b72d0-4e9f-4c26-8a69-f949f367c91d/JenkinsCI/e5dafaf8889d406aac4a0b87ca799c81/a70c25df-ac3b-4aa5-bee8-9b2306dd7016",
+            message: "Container myapp:${env.VERSION} deployed successfully to ${env.ENVIRONMENT} environment by ${env.JOB_NAME} No: ${env.BUILD_NUMBER}"
+    }
+    failure {
+        office365ConnectorSend webhookUrl: "https://outlook.office.com/webhook/123456...",
+            message: "Deployment of the container myapp:${env.VERSION} to ${env.ENVIRONMENT} environment failed by ${env.JOB_NAME} No: ${env.BUILD_NUMBER}"
+    }
+}
 
 }
