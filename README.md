@@ -1,3 +1,9 @@
+[![CICD](https://img.shields.io/badge/HarrierPanels-CI%2FCD-blue)](./)
+[![EPAM](https://img.shields.io/badge/EPAM-Capstone%20Project-orange)](./)
+[![HitCount](https://hits.dwyl.com/HarrierPanels/sql.svg?style=flat&show=unique)](http://hits.dwyl.com/HarrierPanels/my-java-project)
+<br>
+
+
 <div id="pipeline-box">
 <h2>cd-pipeline - Stage View</h2>
 <div class="table-box"><div class="table-viewPort">
