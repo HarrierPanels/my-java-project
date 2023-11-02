@@ -10,3 +10,6 @@
 5. Build a Docker image
 6. Tags the image 2 times (latest and build version)
 7. Push the image to Docker Hub
+####Prerequisits
+agent 'aws2023' by Amazon EC2 Plugin
+GitHub Repo: https://github.com/HarrierPanels/my-java-project
