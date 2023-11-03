@@ -86,13 +86,15 @@ my-java-project/
 
     WORKDIR: Sets the working directory within the container to "/app." Subsequent commands will be executed in this directory.
 
-    COPY: Copies the source code from the host machine's "src" directory to the "/app/src" directory inside the container.
+    COPY: Copies the source code from the host machine's "src" directory to the "/app/src" directory inside 
+    the container.
 
     RUN: Executes commands within the container. In this Dockerfile:
         It updates the package list and installs the OpenJDK 11 development kit (JDK).
         It compiles the Java code located at "/app/src/main/java/com/example/MyApp.java."
 
-    EXPOSE: Informs Docker that the container will listen on port 80. However, this instruction doesn't actually publish the port to the host.
+    EXPOSE: Informs Docker that the container will listen on port 80. However, this instruction doesn't actually 
+    publish the port to the host.
 
     CMD: Specifies the default command to run when the container is started. In this case, it runs the Java application using the "java" command with the classpath and main class provided.
 
