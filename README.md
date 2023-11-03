@@ -28,13 +28,3 @@ my-java-project/
                     └── example/
                         └── MyApp.java
 
-> [Jenkinsfile](./Jenkinsfile)
->  [pom.xml](./pom.xml)
->  [my-java-app/](./my-java-app/)
->    [Dockerfile](./my-java-app/Dockerfile)
-  - [src/](./my-java-app/src/)
-    - [main/](./my-java-app/src/main/)
-      - [java/](./my-java-app/src/main/java/)
-        - [com/](./my-java-app/src/main/java/com/)
-          - [example/](./my-java-app/src/main/java/com/example/)
-            - [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)
