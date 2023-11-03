@@ -31,7 +31,25 @@ my-java-project/
 ```
 #### Fles:
 > [Jenkinsfile](./Jenkinsfile) <br>
-> <sup>The Jenkins Pipeline is designed to automate various stages of a CI/CD process for a Java application. </sup>
+> <sup>The Jenkins Pipeline is designed to automate various stages of a CI/CD process for a Java application.     Agent Configuration:
+        The pipeline is configured to run on an agent labeled as 'aws2023', which is typically an Amazon EC2 instance. This agent is provisioned dynamically using the Amazon EC2 Plugin.
+
+    Stages:
+
+        Checkout: This stage checks out the source code from the version control system.
+
+        Static Code Analysis with SonarQube:
+            It runs a SonarQube analysis on the code.
+            A SonarQube Docker image is pulled and started, and the analysis is executed.
+            This stage ensures that SonarQube is running and accessible before proceeding with the analysis.
+
+        Build Docker Image:
+            It builds a Docker image for the Java application.
+
+        Tag and Push Docker Image:
+            Tags the Docker image with version information (using the Jenkins build number or 'latest').
+            Logs in to Docker Hub using credentials provided via Jenkins credentials.
+            Pushes the Docker image to a Docker Hub repository.</sup><br>
 > [pom.xml](./pom.xml) <br>
 > [Dockerfile](./my-java-app/Dockerfile) <br>
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)
