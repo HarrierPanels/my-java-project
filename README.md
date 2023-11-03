@@ -13386,3 +13386,10 @@ sha256:1ccfdeb2968a8dc88ae28e175f5f0fe1497a9ab0b5e5e94c058d9d7d8f2bf014 size: 19
 [Pipeline] End of Pipeline
 Finished: SUCCESS
 ```
+## Create a CD pipeline:
+1. Options at startup:
+a. Environment name (dev/qa)
+b. Version number (ie image tag, version or latest). This list should be dynamically pulled from Dockerhub
+2. Deployment of the image on the selected Eivironment
+3. Stage with healthcheck of deployed env (curl endpoint or smth else)
+4. Notifications on MS Teams
