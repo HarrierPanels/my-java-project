@@ -13417,29 +13417,22 @@ my-java-project/
 ```
 #### Fles:
 > [Jenkinsfile-1](./Jenkinsfile-1) <br>
-> <sup>The Jenkins Pipeline is designed to automate various stages of a CI/CD process for a Java application.</sup><br>
+> <sup>The Jenkinsfile covers various aspects of a typical deployment process, including source code retrieval, Docker image version selection, environment choice, deployment, and health checks. It also handles notifications for different outcomes.</sup><br>
 
+    Agent Configuration: The pipeline is configured to run on an agent labeled 'aws2023,' which is typically provisioned using the Amazon EC2 Plugin.
 
-    Agent Configuration:
-        The pipeline is configured to run on an agent labeled as 'aws2023', which is 
-        an Amazon EC2 instance. This agent is provisioned dynamically using the Amazon EC2 Plugin.
+    Environment Variables: The pipeline defines environment variables, including AWS_CREDS, to store credentials and other environment-specific values.
 
     Stages:
+        Checkout: This stage checks out the source code from the version control system (e.g., Git).
+        Fetch Docker Hub Tags: It fetches available tags for a Docker Hub repository and lets you choose a version interactively.
+        Select Environment: It allows you to select the deployment environment (either 'dev' or 'qa').
+        Deploy to Environment: This stage deploys the application to the selected environment. It includes different deployment processes for 'dev' and 'qa.'
 
-        Checkout: This stage checks out the source code from the version control system.
+    Health Check: This stage performs a health check on the deployed application. The healthcheck.sh script is executed to ensure the application is responding as expected. It uses regular expressions to look for either 'Harrier' or 'Maven' in the response.
 
-        Static Code Analysis with SonarQube:
-            It runs a SonarQube analysis on the code.
-            A SonarQube Docker image is pulled and started, and the analysis is executed.
-            This stage ensures that SonarQube is running and accessible before proceeding with the analysis.
+    Post Section: In case of success or failure of the pipeline, the post section sends notifications using the Office 365 Connector Jenkins plugin. Successful deployment triggers a success message, while a failed deployment triggers a failure message.
 
-        Build Docker Image:
-            It builds a Docker image for the Java application.
-
-        Tag and Push Docker Image:
-            Tags the Docker image with version information (using the Jenkins build number or 'latest').
-            Logs in to Docker Hub using credentials provided via Jenkins credentials.
-            Pushes the Docker image to a Docker Hub repository.
 
 > [pom.xml](./pom.xml) <br>
 > <sup>The POM file provides essential project information, including project identifiers, dependencies, and build settings. </sup><br>
