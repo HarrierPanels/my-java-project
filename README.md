@@ -29,9 +29,9 @@ my-java-project/
                     └── example/
                         └── MyApp.java
 ```
-> [Jenkinsfile](./Jenkinsfile)
->  [pom.xml](./pom.xml)
->  [my-java-app/](./my-java-app/)
+> [Jenkinsfile](./Jenkinsfile) <br>
+>  [pom.xml](./pom.xml) <br>
+>  [my-java-app/](./my-java-app/) <br>
 >    [Dockerfile](./my-java-app/Dockerfile)
   - [src/](./my-java-app/src/)
     - [main/](./my-java-app/src/main/)
