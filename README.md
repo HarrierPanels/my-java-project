@@ -13849,6 +13849,12 @@ stage block (Declarative: Post Actions) - (0.25 sec in block)
 	
 office365ConnectorSend - (0.12 sec in self)	
 ```
+#### MS Teams notification:
+[Yesterday 21:09] Jenkins
+cd-pipeline: Build #141
+Notification from cd-pipeline
+[Container myapp:latest deployed successfully to dev environment by cd-pipeline No: 141](https://teams.microsoft.com/l/message/19:nrrgA8KPRE6A8DqMK1O4K9ADCOa3aqbPg4blQHV1BhY1@thread.tacv2/1698952167092?tenantId=b41b72d0-4e9f-4c26-8a69-f949f367c91d&groupId=8dab633d-3412-4b31-992e-3e7f036cdd1f&parentMessageId=1698952167092&teamName=EPAM%20DevOps%20UA%20Internal%20course&channelName=General&createdTime=1698952167092)
+
 ```
 [ec2-user@ip-172-31-47-155 ~]$ eksctl get cluster dev-cluster
 NAME            VERSION STATUS  CREATED                 VPC                     SUBNETS
