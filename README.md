@@ -13878,7 +13878,6 @@ NAME                              STATUS   ROLES    AGE   VERSION
 ip-192-168-159-193.ec2.internal   Ready    <none>   23m   v1.28.2-eks-a5df82a
 ip-192-168-199-206.ec2.internal   Ready    <none>   22m   v1.28.2-eks-a5df82a
 
-[ec2-user@ip-172-31-47-155 ~]$ kubectl describe deployment dev-deployment-5775796674-22mtf^C
 [ec2-user@ip-172-31-47-155 ~]$ kubectl describe deployments -n dev-namespace
 Name:                   dev-deployment
 Namespace:              dev-namespace
