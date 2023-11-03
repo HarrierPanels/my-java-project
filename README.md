@@ -56,6 +56,26 @@ my-java-project/
             Pushes the Docker image to a Docker Hub repository.
 
 > [pom.xml](./pom.xml) <br>
+> <sup>The POM file provides essential project information, including project identifiers, dependencies, and build settings. </sup><br>
+
+    modelVersion: Specifies the POM model version, which is set to 4.0.0 in this case.
+
+    groupId: Identifies the group or organization to which the project belongs. In this example, it's "com.example."
+
+    artifactId: Specifies the unique identifier for the project, which is "your-project-name" here.
+
+    version: Indicates the version of the project. The version is "1.0-SNAPSHOT," where "SNAPSHOT" typically signifies a development version.
+
+    properties: This section allows you to define various properties for the project. Notably:
+        maven.compiler.source and maven.compiler.target set the Java source and target compatibility versions to 1.8.
+        sonar.host.url specifies the URL of a SonarQube server for code analysis. It's set to a local server in this example, but it should be changed to the actual SonarQube server URL.
+
+    dependencies: Lists the project's dependencies. In this case, it includes a JUnit dependency with version 4.12, used for testing purposes.
+
+    build: This section is used for configuring build-related settings, including plugins.
+        The maven-compiler-plugin is configured to set the source and target compatibility to 1.8.
+        The sonar-maven-plugin is configured for integrating with SonarQube for code analysis.
+
 > [Dockerfile](./my-java-app/Dockerfile) <br>
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)
 > <sup></sup>
