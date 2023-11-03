@@ -32,6 +32,8 @@ my-java-project/
 #### Fles:
 > [Jenkinsfile](./Jenkinsfile) <br>
 > <sup>The Jenkins Pipeline is designed to automate various stages of a CI/CD process for a Java application.</sup><br>
+
+
     Agent Configuration:
         The pipeline is configured to run on an agent labeled as 'aws2023', which is typically an Amazon EC2 instance. This agent is provisioned dynamically using the Amazon EC2 Plugin.
 
