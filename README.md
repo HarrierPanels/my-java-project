@@ -31,6 +31,8 @@ my-java-project/
 ```
 #### Fles:
 > [Jenkinsfile](./Jenkinsfile) <br>
+> <sup>The Jenkins Pipeline is designed to automate various stages of a CI/CD process for a Java application. </sup>
 > [pom.xml](./pom.xml) <br>
 > [Dockerfile](./my-java-app/Dockerfile) <br>
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)
+> <sup></sup>
