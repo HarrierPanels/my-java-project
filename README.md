@@ -31,7 +31,8 @@ my-java-project/
 ```
 #### Fles:
 > [Jenkinsfile](./Jenkinsfile) <br>
-> <sup>The Jenkins Pipeline is designed to automate various stages of a CI/CD process for a Java application.</sup><br>    Agent Configuration:
+> <sup>The Jenkins Pipeline is designed to automate various stages of a CI/CD process for a Java application.</sup><br>
+    Agent Configuration:
         The pipeline is configured to run on an agent labeled as 'aws2023', which is typically an Amazon EC2 instance. This agent is provisioned dynamically using the Amazon EC2 Plugin.
 
     Stages:
@@ -50,6 +51,7 @@ my-java-project/
             Tags the Docker image with version information (using the Jenkins build number or 'latest').
             Logs in to Docker Hub using credentials provided via Jenkins credentials.
             Pushes the Docker image to a Docker Hub repository.
+
 > [pom.xml](./pom.xml) <br>
 > [Dockerfile](./my-java-app/Dockerfile) <br>
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)
