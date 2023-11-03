@@ -11,7 +11,8 @@
 6. Tags the image 2 times (latest and build version)
 7. Push the image to Docker Hub
 #### Prerequisits
-> - agent 'aws2023' by Amazon EC2 Plugin<br>
+> - [Docjerfile](my-java-app/Dockerfile)<br>
+> <sup>The Dockerfile is used to build a Docker image for a Java application.</sup><br>
 > - Java based HTTP Server [application](my-java-app/src/main/java/com/example/MyApp.java)<br>
 <sup>A simple Java application that creates an HTTP server and listens on port 80. It responds to any incoming HTTP requests with an HTML page. The application uses the com.sun.net.httpserver package to create the server and handle incoming requests. The main method creates an instance of HttpServer, binds it to port 80, sets the executor to null, and starts the server. The MyHandler class implements the HttpHandler interface and overrides the handle method to send the response to the client. The response is an HTML page that includes an image, a message, and the current year. The handle method sends the response headers and body to the client using the HttpExchange object.</sup><br>
 > Docker Hub repo <a href="https://hub.docker.com/repository/docker/harrierpanels/myapp">harrierpanels/myapp</a>
@@ -13393,3 +13394,109 @@ b. Version number (ie image tag, version or latest). This list should be dynamic
 2. Deployment of the image on the selected Eivironment
 3. Stage with healthcheck of deployed env (curl endpoint or smth else)
 4. Notifications on MS Teams
+#### Prerequisits
+> - Java based HTTP Server [application](my-java-app/src/main/java/com/example/MyApp.java)<br>
+<sup>A simple Java application that creates an HTTP server and listens on port 80. It responds to any incoming HTTP requests with an HTML page. The application uses the com.sun.net.httpserver package to create the server and handle incoming requests. The main method creates an instance of HttpServer, binds it to port 80, sets the executor to null, and starts the server. The MyHandler class implements the HttpHandler interface and overrides the handle method to send the response to the client. The response is an HTML page that includes an image, a message, and the current year. The handle method sends the response headers and body to the client using the HttpExchange object.</sup><br>
+> Docker Hub repo <a href="https://hub.docker.com/repository/docker/harrierpanels/myapp">harrierpanels/myapp</a>
+> Pre-deployed environments: <b>dev</b> - an AWS EKS cluster with a managed node group, qa - an AWS ECS cluster with a Fargate Linux task
+#### Project structure:
+```
+my-java-project/
+├── Jenkinsfile-1
+├── dev-deployment-service.yaml
+├── healthcheck.sh
+├── qa-deployment-service.json
+└── my-java-app/
+    └── src/
+        └── main/
+            └── java/
+                └── com/
+                    └── example/
+                        └── MyApp.java
+```
+#### Fles:
+> [Jenkinsfile](./Jenkinsfile) <br>
+> <sup>The Jenkins Pipeline is designed to automate various stages of a CI/CD process for a Java application.</sup><br>
+
+
+    Agent Configuration:
+        The pipeline is configured to run on an agent labeled as 'aws2023', which is 
+        an Amazon EC2 instance. This agent is provisioned dynamically using the Amazon EC2 Plugin.
+
+    Stages:
+
+        Checkout: This stage checks out the source code from the version control system.
+
+        Static Code Analysis with SonarQube:
+            It runs a SonarQube analysis on the code.
+            A SonarQube Docker image is pulled and started, and the analysis is executed.
+            This stage ensures that SonarQube is running and accessible before proceeding with the analysis.
+
+        Build Docker Image:
+            It builds a Docker image for the Java application.
+
+        Tag and Push Docker Image:
+            Tags the Docker image with version information (using the Jenkins build number or 'latest').
+            Logs in to Docker Hub using credentials provided via Jenkins credentials.
+            Pushes the Docker image to a Docker Hub repository.
+
+> [pom.xml](./pom.xml) <br>
+> <sup>The POM file provides essential project information, including project identifiers, dependencies, and build settings. </sup><br>
+
+    modelVersion: Specifies the POM model version, which is set to 4.0.0 in this case.
+
+    groupId: Identifies the group or organization to which the project belongs. In this example, it's "com.example."
+
+    artifactId: Specifies the unique identifier for the project, which is "your-project-name" here.
+
+    version: Indicates the version of the project. The version is "1.0-SNAPSHOT," where "SNAPSHOT" typically signifies a development version.
+
+    properties: This section allows you to define various properties for the project. Notably:
+        maven.compiler.source and maven.compiler.target set the Java source and target compatibility versions to 1.8.
+        sonar.host.url specifies the URL of a SonarQube server for code analysis. It's set to a local server in this example, but it should be changed to the actual SonarQube server URL.
+
+    dependencies: Lists the project's dependencies. In this case, it includes a JUnit dependency with version 4.12, used for testing purposes.
+
+    build: This section is used for configuring build-related settings, including plugins.
+        The maven-compiler-plugin is configured to set the source and target compatibility to 1.8.
+        The sonar-maven-plugin is configured for integrating with SonarQube for code analysis.
+
+> [Dockerfile](./my-java-app/Dockerfile) <br>
+> <sup>This Dockerfile is designed to create a Docker image that packages a Java application and runs it using OpenJDK 11. It sets up the environment, compiles the Java code, and defines the command to start the application.</sup><br>
+
+    FROM: Specifies the base image for the Docker image. In this case, it uses the "openjdk:11-jre-slim" image, which contains the Java Runtime Environment (JRE) version 11.
+
+    WORKDIR: Sets the working directory within the container to "/app." Subsequent commands will be executed in this directory.
+
+    COPY: Copies the source code from the host machine's "src" directory to the "/app/src" directory inside the container.
+
+    RUN: Executes commands within the container. In this Dockerfile:
+        It updates the package list and installs the OpenJDK 11 development kit (JDK).
+        It compiles the Java code located at "/app/src/main/java/com/example/MyApp.java."
+
+    EXPOSE: Informs Docker that the container will listen on port 80. However, this instruction doesn't actually publish the port to the host.
+
+    CMD: Specifies the default command to run when the container is started. In this case, it runs the Java application using the "java" command with the classpath and main class provided.
+
+> [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)<br>
+> <sup>MyApp.java creates a basic HTTP server that responds with a simple web page when accessed.</sup><br>
+
+    It defines a package named com.example.
+
+    The MyApp class contains the main method, which serves as the entry point of the program. Inside the main method:
+        It creates an HttpServer instance.
+        Binds the server to listen on port 80.
+        Associates a custom MyHandler with the root context ("/").
+        Sets the executor to null.
+        Starts the server and prints a message indicating that the server has started.
+
+    The MyHandler class is a nested static class that implements the HttpHandler interface, responsible for handling incoming HTTP requests. Inside the handle method:
+        It constructs an HTML response as a string.
+        Sends an HTTP 200 (OK) response with the response length.
+        Writes the response to the output stream and closes it.
+
+    The HTML response includes a simple webpage:
+        It displays an image and a message.
+        The image is sourced from a URL.
+        There's a link to an external webpage.
+        The page is generated with Java and includes the current year using Calendar.
