@@ -13489,11 +13489,8 @@ my-java-project/
         The provided arguments are the URL to check and the regex pattern to search for in the response.
         The health check is retried as specified by the retry function. 
 	
-        In the context of a deployment 
-	pipeline, this script is used to check whether the deployed application is responsive and 
-        functioning correctly. If the application doesn't respond within the specified retries, it exits 
-	with an error status, indicating that the application is not healthy. Otherwise, it reports that 
-        the application is up.
+        In the context of a deployment pipeline, this script is used to check whether the deployed 
+        application is responsive and functioning correctly. If the application doesn't respond within the specified              retries, it exits with an error status, indicating that the application is not healthy. Otherwise, it reports             that the application is up.
 
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)<br>
 > <sup>MyApp.java creates a basic HTTP server that responds with a simple web page when accessed.</sup><br>
