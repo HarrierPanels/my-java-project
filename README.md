@@ -35,7 +35,7 @@ my-java-project/
 
 
     Agent Configuration:
-        The pipeline is configured to run on an agent labeled as 'aws2023', which is typically an Amazon EC2 instance. This agent is provisioned dynamically using the Amazon EC2 Plugin.
+        The pipeline is configured to run on an agent labeled as 'aws2023', which is <br>an Amazon EC2 instance. This agent is provisioned dynamically using the Amazon EC2 Plugin.
 
     Stages:
 
