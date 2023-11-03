@@ -29,7 +29,8 @@ my-java-project/
                     └── example/
                         └── MyApp.java
 ```
+#### Fles:
 > [Jenkinsfile](./Jenkinsfile) <br>
 > [pom.xml](./pom.xml) <br>
-> [Dockerfile](./my-java-app/Dockerfile)
+> [Dockerfile](./my-java-app/Dockerfile) <br>
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)
