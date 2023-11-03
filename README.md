@@ -13487,7 +13487,9 @@ my-java-project/
     Health Check:
         The script invokes the retry function with the healthcheck function and the provided arguments.
         The provided arguments are the URL to check and the regex pattern to search for in the response.
-        The health check is retried as specified by the retry function. In the context of a deployment 
+        The health check is retried as specified by the retry function. 
+	
+        In the context of a deployment 
 	pipeline, this script is used to check whether the deployed application is responsive and 
         functioning correctly. If the application doesn't respond within the specified retries, it exits 
 	with an error status, indicating that the application is not healthy. Otherwise, it reports that 
