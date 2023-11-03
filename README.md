@@ -13442,26 +13442,24 @@ my-java-project/
     deployment triggers a failure message.
 
 
-> [pom.xml](./pom.xml) <br>
-> <sup>The POM file provides essential project information, including project identifiers, dependencies, and build settings. </sup><br>
+> [dev-deployment-service.yaml](./dev-deployment-service.yaml) <br>
+> <sup>The file is a Kubernetes configuration file used to deploy the myapp container to the dev environment.</sup><br>
 
-    modelVersion: Specifies the POM model version, which is set to 4.0.0 in this case.
+    Namespace Configuration:
+        It defines a Kubernetes namespace named 'dev-namespace' with the label 'deploy: dev.' Namespaces are used to logically isolate resources within a Kubernetes cluster.
 
-    groupId: Identifies the group or organization to which the project belongs. In this example, it's "com.example."
+    Deployment Configuration:
+        A Deployment named 'dev-deployment' is specified in the 'dev-namespace.'
+        It requests two replicas of the 'myapp' container.
+        The deployment manages pods based on the label 'deploy: dev.'
+        The container uses the Docker image 'harrierpanels/myapp:latest.'
 
-    artifactId: Specifies the unique identifier for the project, which is "your-project-name" here.
+    Service Configuration:
+        A Service named 'dev-service' is defined in the 'dev-namespace.'
+        The service selects pods with the label 'deploy: dev.'
+        It exposes port 80 and forwards traffic to the same port on the pods.
+        The service type is set to 'LoadBalancer,' indicating that an external load balancer is used to route incoming traffic to the pods.
 
-    version: Indicates the version of the project. The version is "1.0-SNAPSHOT," where "SNAPSHOT" typically signifies a development version.
-
-    properties: This section allows you to define various properties for the project. Notably:
-        maven.compiler.source and maven.compiler.target set the Java source and target compatibility versions to 1.8.
-        sonar.host.url specifies the URL of a SonarQube server for code analysis. It's set to a local server in this example, but it should be changed to the actual SonarQube server URL.
-
-    dependencies: Lists the project's dependencies. In this case, it includes a JUnit dependency with version 4.12, used for testing purposes.
-
-    build: This section is used for configuring build-related settings, including plugins.
-        The maven-compiler-plugin is configured to set the source and target compatibility to 1.8.
-        The sonar-maven-plugin is configured for integrating with SonarQube for code analysis.
 
 > [Dockerfile](./my-java-app/Dockerfile) <br>
 > <sup>This Dockerfile is designed to create a Docker image that packages a Java application and runs it using OpenJDK 11. It sets up the environment, compiles the Java code, and defines the command to start the application.</sup><br>
