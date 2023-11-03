@@ -61,17 +61,22 @@ my-java-project/
 
     modelVersion: Specifies the POM model version, which is set to 4.0.0 in this case.
 
-    groupId: Identifies the group or organization to which the project belongs. In this example, it's "com.example."
+    groupId: Identifies the group or organization to which the project belongs. In this example, 
+    it's "com.example."
 
     artifactId: Specifies the unique identifier for the project, which is "your-project-name" here.
 
-    version: Indicates the version of the project. The version is "1.0-SNAPSHOT," where "SNAPSHOT" typically signifies a development version.
+    version: Indicates the version of the project. The version is "1.0-SNAPSHOT," where "SNAPSHOT" 
+    typically signifies a development version.
 
     properties: This section allows you to define various properties for the project. Notably:
-        maven.compiler.source and maven.compiler.target set the Java source and target compatibility versions to 1.8.
-        sonar.host.url specifies the URL of a SonarQube server for code analysis. It's set to a local server in this example, but it should be changed to the actual SonarQube server URL.
+        maven.compiler.source and maven.compiler.target set the Java source and target compatibility 
+	versions to 1.8. sonar.host.url specifies the URL of a SonarQube server for code analysis. 
+        It's set to a local server in this example, but it should be changed to the actual 
+	SonarQube server URL.
 
-    dependencies: Lists the project's dependencies. In this case, it includes a JUnit dependency with version 4.12, used for testing purposes.
+    dependencies: Lists the project's dependencies. In this case, it includes a JUnit dependency with 
+    version 4.12, used for testing purposes.
 
     build: This section is used for configuring build-related settings, including plugins.
         The maven-compiler-plugin is configured to set the source and target compatibility to 1.8.
@@ -82,12 +87,14 @@ my-java-project/
 > using OpenJDK 11. It sets up the environment, compiles the Java code, and defines the command to start
 > the application.</sup><br>
 
-    FROM: Specifies the base image for the Docker image. In this case, it uses the "openjdk:11-jre-slim" image, which contains the Java Runtime Environment (JRE) version 11.
+    FROM: Specifies the base image for the Docker image. In this case, it uses the "openjdk:11-jre-slim" 
+    image, which contains the Java Runtime Environment (JRE) version 11.
 
-    WORKDIR: Sets the working directory within the container to "/app." Subsequent commands will be executed in this directory.
+    WORKDIR: Sets the working directory within the container to "/app." Subsequent commands will be 
+    executed in this directory.
 
-    COPY: Copies the source code from the host machine's "src" directory to the "/app/src" directory inside 
-    the container.
+    COPY: Copies the source code from the host machine's "src" directory to the "/app/src" 
+    directory inside the container.
 
     RUN: Executes commands within the container. In this Dockerfile:
         It updates the package list and installs the OpenJDK 11 development kit (JDK).
@@ -96,7 +103,8 @@ my-java-project/
     EXPOSE: Informs Docker that the container will listen on port 80. However, this instruction doesn't actually 
     publish the port to the host.
 
-    CMD: Specifies the default command to run when the container is started. In this case, it runs the Java application using the "java" command with the classpath and main class provided.
+    CMD: Specifies the default command to run when the container is started. In this case, it runs the 
+    Java application using the "java" command with the classpath and main class provided.
 
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)<br>
 > <sup>MyApp.java creates a basic HTTP server that responds with a simple web page when accessed.</sup><br>
