@@ -13575,3 +13575,341 @@ my-java-project/
         The image is sourced from a URL.
         There's a link to an external webpage.
         The page is generated with Java and includes the current year using Calendar.
+
+```
+Started by upstream project "test-aws" build number 10
+originally caused by:
+ Started by user a
+Obtained Jenkinsfile-1 from git https://github.com/HarrierPanels/my-java-project.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Still waiting to schedule task
+All nodes of label ‘aws2023’ are offline
+Running on EC2 (Amazon-EC2) - aws-ec2-agent1 (i-00595c8913d0c9cdd) in /home/ec2-user/jenkins/workspace/cd-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential github-creds-user-token
+Cloning the remote Git repository
+Cloning repository https://github.com/HarrierPanels/my-java-project.git
+ > git init /home/ec2-user/jenkins/workspace/cd-pipeline # timeout=10
+Fetching upstream changes from https://github.com/HarrierPanels/my-java-project.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.40.1'
+using GIT_ASKPASS to set credentials github-creds-user-token
+ > git fetch --tags --force --progress -- https://github.com/HarrierPanels/my-java-project.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/HarrierPanels/my-java-project.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Checking out Revision 73cf457b5384706a98691a8c52a016bdc7e89301 (refs/remotes/origin/main)
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 73cf457b5384706a98691a8c52a016bdc7e89301 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git checkout -b main 73cf457b5384706a98691a8c52a016bdc7e89301 # timeout=10
+Commit message: "CD Pipeline"
+ > git rev-list --no-walk 4dfa8241059aeb1b3faa31c1c4b4ce9fb8cf8abc # timeout=10
+Cleaning workspace
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withCredentials
+WARNING: Unknown parameter(s) found for class type 'com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding': keyIdVariable,secretVariable
+Masking supported pattern matches of $AWS_ACCESS_KEY_ID or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+ > git rev-parse --verify HEAD # timeout=10
+Resetting working tree
+ > git reset --hard # timeout=10
+ > git clean -fdx # timeout=10
+using credential github-creds-user-token
+Fetching changes from the remote Git repository
+Cleaning workspace
+ > git rev-parse --resolve-git-dir /home/ec2-user/jenkins/workspace/cd-pipeline/.git # timeout=10
+ > git config remote.origin.url https://github.com/HarrierPanels/my-java-project.git # timeout=10
+ > git rev-parse --verify HEAD # timeout=10
+Resetting working tree
+ > git reset --hard # timeout=10
+ > git clean -fdx # timeout=10
+Fetching upstream changes from https://github.com/HarrierPanels/my-java-project.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.40.1'
+using GIT_ASKPASS to set credentials github-creds-user-token
+ > git fetch --tags --force --progress -- https://github.com/HarrierPanels/my-java-project.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 73cf457b5384706a98691a8c52a016bdc7e89301 (refs/remotes/origin/main)
+Commit message: "CD Pipeline"
+Cleaning workspace
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Fetch Docker Hub Tags)
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 73cf457b5384706a98691a8c52a016bdc7e89301 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main 73cf457b5384706a98691a8c52a016bdc7e89301 # timeout=10
+ > git rev-parse --verify HEAD # timeout=10
+Resetting working tree
+ > git reset --hard # timeout=10
+ > git clean -fdx # timeout=10
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ curl -s https://hub.docker.com/v2/repositories/harrierpanels/myapp/tags
+[Pipeline] input
+Input requested
+Approved by a
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Select Environment)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] input
+Input requested
+Approved by a
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to Environment)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+latest chosen for dev:
+[Pipeline] sh
++ aws eks update-kubeconfig --region us-east-1 --name dev-cluster
+Added new context arn:aws:eks:us-east-1:449040158477:cluster/dev-cluster to /home/ec2-user/.kube/config
+[Pipeline] sh
++ sed -i 's/harrierpanels\/myapp:latest/harrierpanels\/myapp:latest/g' dev-deployment-service.yaml
+[Pipeline] sh
++ kubectl apply -f dev-deployment-service.yaml
+namespace/dev-namespace created
+deployment.apps/dev-deployment created
+service/dev-service created
+[Pipeline] echo
+Waiting for the LoadBalancer to be assigned an external IP...
+[Pipeline] sh
++ kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'
+[Pipeline] sleep
+Sleeping for 5 sec
+[Pipeline] sh
++ kubectl get svc dev-service -n dev-namespace -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}'
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Health Check)
+[Pipeline] timeout
+Timeout set to expire in 3 min 0 sec
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ chmod +x healthcheck.sh
+[Pipeline] sh
++ ./healthcheck.sh a2ae3efcdad444b3d9836e10045fb2a0-1187648468.us-east-1.elb.amazonaws.com 'Harrier|Maven'
+Host unreachable
+Command failed, retrying after 5 seconds... 1/60
+Host unreachable
+Command failed, retrying after 5 seconds... 2/60
+Host unreachable
+Command failed, retrying after 5 seconds... 3/60
+Host unreachable
+Command failed, retrying after 5 seconds... 4/60
+Host unreachable
+Command failed, retrying after 5 seconds... 5/60
+Host unreachable
+Command failed, retrying after 5 seconds... 6/60
+Host unreachable
+Command failed, retrying after 5 seconds... 7/60
+Host unreachable
+Command failed, retrying after 5 seconds... 8/60
+Host unreachable
+Command failed, retrying after 5 seconds... 9/60
+Host unreachable
+Command failed, retrying after 5 seconds... 10/60
+Host unreachable
+Command failed, retrying after 5 seconds... 11/60
+Host unreachable
+Command failed, retrying after 5 seconds... 12/60
+Host unreachable
+Command failed, retrying after 5 seconds... 13/60
+Host UP
+[Pipeline] echo
+Health check passed
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] office365ConnectorSend
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+```
+```
+Step	Arguments			Status
+Start of Pipeline - (1 min 56 sec in block)			
+	
+node - (1 min 54 sec in block)	aws2023		
+node block - (1 min 54 sec in block)			
+	
+stage - (5.7 sec in block)	Declarative: Checkout SCM		
+stage block (Declarative: Checkout SCM) - (5.3 sec in block)			
+	
+checkout - (5.1 sec in self)			
+withEnv - (1 min 48 sec in block)	GIT_BRANCH, GIT_COMMIT, GIT_LOCAL_BRANCH, GIT_PREVIOUS_COMMIT, GIT_PREVIOUS_SUCCESSFUL_COMMIT, GIT_URL		
+withEnv block - (1 min 48 sec in block)			
+	
+withCredentials - (1 min 48 sec in block)			
+withCredentials block - (1 min 48 sec in block)			
+	
+stage - (3.7 sec in block)	Checkout		
+stage block (Checkout) - (3.6 sec in block)			
+	
+checkout - (3.4 sec in self)			
+stage - (10 sec in block)	Fetch Docker Hub Tags		
+stage block (Fetch Docker Hub Tags) - (10 sec in block)			
+	
+script - (10 sec in block)			
+script block - (9.9 sec in block)			
+	
+sh - (3.4 sec in self)	curl -s https://hub.docker.com/v2/repositories/harrierpanels/myapp/tags		
+input - (6.3 sec in self)			
+stage - (16 sec in block)	Select Environment		
+stage block (Select Environment) - (16 sec in block)			
+	
+script - (16 sec in block)			
+script block - (16 sec in block)			
+	
+input - (15 sec in self)			
+stage - (1 min 9 sec in block)	Deploy to Environment		
+stage block (Deploy to Environment) - (1 min 9 sec in block)			
+	
+script - (1 min 8 sec in block)			
+script block - (1 min 8 sec in block)			
+	
+echo - (26 ms in self)	109 chosen for qa:		
+sh - (3.1 sec in self)	aws iam get-role --role-name ecsTaskExecutionRole		
+sh - (4.2 sec in self)	aws iam create-role --role-name ecsTaskExecutionRole --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"ecs-tasks.amazonaws.com"},"Action":"sts:AssumeRole"}]}'		
+sh - (4.1 sec in self)	aws iam put-role-policy --role-name ecsTaskExecutionRole --policy-name ECSTaskExecutionRolePolicy --policy-document '{"Version":"2012-10-17","Statement":[{"Sid":"ECSTaskExecutionRolePermissions","Effect":"Allow","Action":["ecr:GetAuthorizationToken","ecr:BatchCheckLayerAvailability","ecr:GetDownloadUrlForLayer","ecr:BatchGetImage","ecs:RunTask","ecs:StopTask","logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents"],"Resource":"*"}]}'		
+sh - (3.2 sec in self)	aws sts get-caller-identity --query Account --output text | tr -d '\n'		
+sh - (3 sec in self)	sed -i 's/aws_account_id/449040158477/g' qa-deployment-service.json		
+sh - (3 sec in self)	sed -i 's/harrierpanels\/myapp:latest/harrierpanels\/myapp:109/g' qa-deployment-service.json		
+sh - (3 sec in self)	aws ecs register-task-definition --cli-input-json file://qa-deployment-service.json		
+sh - (3.3 sec in self)	aws ec2 describe-security-groups --filters "Name=group-name,Values=Secjen" --query "SecurityGroups[0].GroupId" --output text		
+sh - (4.5 sec in self)	aws ec2 describe-subnets --filters "Name=vpc-id,Values=$(aws ec2 describe-vpcs --filters "Name=isDefault,Values=true" --query "Vpcs[0].VpcId" --output text)" --query "Subnets[0].SubnetId" --output text		
+sh - (3 sec in self)	aws ecs create-service --cluster qa-cluster --service-name qa-service --task-definition qa-fargate --desired-count 1 --launch-type 'FARGATE' --network-configuration 'awsvpcConfiguration={subnets=[subnet-05aad6e4e6ab6159b],securityGroups=[sg-07efc7f47b9444016],assignPublicIp=ENABLED}'		
+sh - (3.2 sec in self)	aws ecs list-tasks --cluster qa-cluster --service qa-service --query 'taskArns[0]' --output text | tr -d '\n'		
+sleep - (10 sec in self)	10		
+sh - (3.6 sec in self)	aws ecs list-tasks --cluster qa-cluster --service qa-service --query 'taskArns[0]' --output text | tr -d '\n'		
+sh - (3.3 sec in self)	aws ecs describe-tasks --cluster qa-cluster --tasks arn:aws:ecs:us-east-1:449040158477:task/qa-cluster/b2a64f5120fc4d81a7b8f803bfb7d470 --query 'tasks[0].attachments[0].details[1].value' --output text | tr -d '\n'		
+sh - (3.3 sec in self)	aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp'		
+sh - (3.3 sec in self)	aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.subnets[0]' --output text | tr -d '\n'		
+sh - (3.3 sec in self)	aws ec2 describe-network-interfaces --network-interface-ids eni-012d1b4b15dc02308 --query 'NetworkInterfaces[0].PrivateIpAddress' --output text | tr -d '\n'		
+sh - (3.3 sec in self)	aws ec2 describe-network-interfaces --filters Name=subnet-id,Values=subnet-05aad6e4e6ab6159b Name=private-ip-address,Values=172.31.22.31 --query 'NetworkInterfaces[0].Association.PublicIp' --output text | tr -d '\n'		
+stage - (7.6 sec in block)	Health Check		
+stage block (Health Check) - (7.5 sec in block)			
+	
+timeout - (7.3 sec in block)			
+timeout block - (7.2 sec in block)			
+	
+script - (7 sec in block)			
+script block - (6.9 sec in block)			
+	
+sh - (3.3 sec in self)	chmod +x healthcheck.sh		
+sh - (3.5 sec in self)	./healthcheck.sh 54.236.6.254 'Harrier|Maven'		
+echo - (16 ms in self)	Health check passed		
+stage - (0.45 sec in block)	Declarative: Post Actions		
+stage block (Declarative: Post Actions) - (0.25 sec in block)			
+	
+office365ConnectorSend - (0.12 sec in self)	
+```
+```
+[ec2-user@ip-172-31-47-155 ~]$ eksctl get cluster dev-cluster
+NAME            VERSION STATUS  CREATED                 VPC                     SUBNETS
+                                                                                SECURITYGROUPS    PROVIDER
+dev-cluster     1.28    ACTIVE  2023-11-02T18:48:45Z    vpc-0b9d5cac7a83856ce   subnet-0520c4825a4947dc9,subnet-0561ad10a233e9324,subnet-0d909b9ebdc6adaa9,subnet-0f33771ceea46831f
+                EKS
+
+[ec2-user@ip-172-31-47-155 ~]$ kubectl cluster-info
+Kubernetes control plane is running at https://37D7D5AC41E16C94F043D8FFEE3ECCE2.gr7.us-east-1.eks.amazonaws.com
+CoreDNS is running at https://37D7D5AC41E16C94F043D8FFEE3ECCE2.gr7.us-east-1.eks.amazonaws.com/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+
+[ec2-user@ip-172-31-47-155 ~]$ kubectl get svc -n dev-namespace
+NAME          TYPE           CLUSTER-IP      EXTERNAL-IP                                                               PORT(S)        AGE
+dev-service   LoadBalancer   10.100.252.47   a2ae3efcdad444b3d9836e10045fb2a0-1187648468.us-east-1.elb.amazonaws.com   80:30655/TCP   12m
+
+[ec2-user@ip-172-31-47-155 ~]$ curl -Ls a2ae3efcdad444b3d9836e10045fb2a0-1187648468.us-east-1.elb.amazonaws.com
+<html><head><title>Welcome to Harrier Panels Page!</title></head><body><div style="text-align:center"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEid812UJHFiQs8-SCK2BoakeB1zGxXmqfVk1sfHzudQhd5wjnaoUbePaL-uR0Bqqx4sIW6grWYEk2QuhUjefeynN2wSIsLOo0kQI0MTfDn60VB84CnN6KPo-A98s7vzyg/s220/hp.png"><br>Welcome to <a href="https://aviasimulator.blogspot.com">Harrier Panels</a> Page!<br>Powered by Java &copy; Harrier Panels 2023</div></body></html>
+
+[ec2-user@ip-172-31-47-155 ~]$ kubectl get pods -n dev-namespace
+NAME                              READY   STATUS    RESTARTS   AGE
+dev-deployment-5775796674-22mtf   1/1     Running   0          15m
+dev-deployment-5775796674-6wrf4   1/1     Running   0          15m
+
+[ec2-user@ip-172-31-47-155 ~]$ kubectl get nodes -n dev-namespace
+NAME                              STATUS   ROLES    AGE   VERSION
+ip-192-168-159-193.ec2.internal   Ready    <none>   23m   v1.28.2-eks-a5df82a
+ip-192-168-199-206.ec2.internal   Ready    <none>   22m   v1.28.2-eks-a5df82a
+
+[ec2-user@ip-172-31-47-155 ~]$ kubectl describe deployment dev-deployment-5775796674-22mtf^C
+[ec2-user@ip-172-31-47-155 ~]$ kubectl describe deployments -n dev-namespace
+Name:                   dev-deployment
+Namespace:              dev-namespace
+CreationTimestamp:      Thu, 02 Nov 2023 19:07:59 +0000
+Labels:                 <none>
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               deploy=dev
+Replicas:               2 desired | 2 updated | 2 total | 2 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  deploy=dev
+  Containers:
+   myapp:
+    Image:        harrierpanels/myapp:latest
+    Port:         <none>
+    Host Port:    <none>
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   dev-deployment-5775796674 (2/2 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  18m   deployment-controller  Scaled up replica set dev-deployment-5775796674 to 2
+  
+```
