@@ -11,7 +11,7 @@
 6. Tags the image 2 times (latest and build version)
 7. Push the image to Docker Hub
 #### Prerequisits
-> - [Docjerfile](my-java-app/Dockerfile)<br>
+> - [Dockerfile](my-java-app/Dockerfile)<br>
 > <sup>The Dockerfile is used to build a Docker image for a Java application.</sup><br>
 > - Java based HTTP Server [application](my-java-app/src/main/java/com/example/MyApp.java)<br>
 <sup>A simple Java application that creates an HTTP server and listens on port 80. It responds to any incoming HTTP requests with an HTML page. The application uses the com.sun.net.httpserver package to create the server and handle incoming requests. The main method creates an instance of HttpServer, binds it to port 80, sets the executor to null, and starts the server. The MyHandler class implements the HttpHandler interface and overrides the handle method to send the response to the client. The response is an HTML page that includes an image, a message, and the current year. The handle method sends the response headers and body to the client using the HttpExchange object.</sup><br>
@@ -78,7 +78,9 @@ my-java-project/
         The sonar-maven-plugin is configured for integrating with SonarQube for code analysis.
 
 > [Dockerfile](./my-java-app/Dockerfile) <br>
-> <sup>This Dockerfile is designed to create a Docker image that packages a Java application and runs it using OpenJDK 11. It sets up the environment, compiles the Java code, and defines the command to start the application.</sup><br>
+> <sup>This Dockerfile is designed to create a Docker image that packages a Java application and runs it
+> using OpenJDK 11. It sets up the environment, compiles the Java code, and defines the command to start
+> the application.</sup><br>
 
     FROM: Specifies the base image for the Docker image. In this case, it uses the "openjdk:11-jre-slim" image, which contains the Java Runtime Environment (JRE) version 11.
 
@@ -13446,7 +13448,8 @@ my-java-project/
 > <sup>The file is a Kubernetes configuration file used to deploy the myapp container to the dev environment.</sup><br>
 
     Namespace Configuration:
-        It defines a Kubernetes namespace named 'dev-namespace' with the label 'deploy: dev.' Namespaces are used to logically isolate resources within a Kubernetes cluster.
+        It defines a Kubernetes namespace named 'dev-namespace' with the label 'deploy: dev.' Namespaces 
+	are used to logically isolate resources within a Kubernetes cluster.
 
     Deployment Configuration:
         A Deployment named 'dev-deployment' is specified in the 'dev-namespace.'
@@ -13458,11 +13461,14 @@ my-java-project/
         A Service named 'dev-service' is defined in the 'dev-namespace.'
         The service selects pods with the label 'deploy: dev.'
         It exposes port 80 and forwards traffic to the same port on the pods.
-        The service type is set to 'LoadBalancer,' indicating that an external load balancer is used to route incoming traffic to the pods.
+        The service type is set to 'LoadBalancer,' indicating that an external load balancer is used 
+	to route incoming traffic to the pods.
 
 
 > [Dockerfile](./my-java-app/Dockerfile) <br>
-> <sup>This Dockerfile is designed to create a Docker image that packages a Java application and runs it using OpenJDK 11. It sets up the environment, compiles the Java code, and defines the command to start the application.</sup><br>
+> <sup>This Dockerfile is designed to create a Docker image that packages a Java application and runs it
+> using OpenJDK 11. It sets up the environment, compiles the Java code, and defines the command to start
+> the application.</sup><br>
 
     FROM: Specifies the base image for the Docker image. In this case, it uses the "openjdk:11-jre-slim" image, which contains the Java Runtime Environment (JRE) version 11.
 
