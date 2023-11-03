@@ -77,5 +77,21 @@ my-java-project/
         The sonar-maven-plugin is configured for integrating with SonarQube for code analysis.
 
 > [Dockerfile](./my-java-app/Dockerfile) <br>
+> <sup>This Dockerfile is designed to create a Docker image that packages a Java application and runs it using OpenJDK 11. It sets up the environment, compiles the Java code, and defines the command to start the application.</sup><br>
+
+    FROM: Specifies the base image for the Docker image. In this case, it uses the "openjdk:11-jre-slim" image, which contains the Java Runtime Environment (JRE) version 11.
+
+    WORKDIR: Sets the working directory within the container to "/app." Subsequent commands will be executed in this directory.
+
+    COPY: Copies the source code from the host machine's "src" directory to the "/app/src" directory inside the container.
+
+    RUN: Executes commands within the container. In this Dockerfile:
+        It updates the package list and installs the OpenJDK 11 development kit (JDK).
+        It compiles the Java code located at "/app/src/main/java/com/example/MyApp.java."
+
+    EXPOSE: Informs Docker that the container will listen on port 80. However, this instruction doesn't actually publish the port to the host.
+
+    CMD: Specifies the default command to run when the container is started. In this case, it runs the Java application using the "java" command with the classpath and main class provided.
+
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)
 > <sup></sup>
