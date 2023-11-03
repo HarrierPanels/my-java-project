@@ -13465,24 +13465,34 @@ my-java-project/
 	to route incoming traffic to the pods.
 
 
-> [Dockerfile](./my-java-app/Dockerfile) <br>
-> <sup>This Dockerfile is designed to create a Docker image that packages a Java application and runs it
-> using OpenJDK 11. It sets up the environment, compiles the Java code, and defines the command to start
-> the application.</sup><br>
+> [healthcheck.sh](./healthcheck.sh) <br>
+> <sup>The script is used in a pipeline for performing health checks on a deployed application.</sup><br>
 
-    FROM: Specifies the base image for the Docker image. In this case, it uses the "openjdk:11-jre-slim" image, which contains the Java Runtime Environment (JRE) version 11.
+    retry Function:
+        This function allows for retrying a given command until it succeeds or until a maximum number 
+	of retries is reached.
+        It takes as arguments a command or function to execute, a maximum retry count, and a sleep interval.
+        It repeatedly executes the provided command or function.
+        If the command succeeds (returns exit code 0), it breaks out of the loop.
+        If the command fails, it waits for the specified sleep interval and then retries.
+        If the maximum retry count is reached without success, it exits with an error code.
 
-    WORKDIR: Sets the working directory within the container to "/app." Subsequent commands will be executed in this directory.
+    healthcheck Function:
+        This function performs a health check on a given URL.
+        It takes two arguments: the URL to check and a pattern (regex) to search for in the response.
+        It uses curl to retrieve the content from the URL and grep to search for the specified pattern.
+        If the URL is unreachable (curl fails), it returns an error and prints "Host unreachable."
+        If the pattern is found in the response, it returns a success and prints "Host UP."
 
-    COPY: Copies the source code from the host machine's "src" directory to the "/app/src" directory inside the container.
+    Health Check:
+        The script invokes the retry function with the healthcheck function and the provided arguments.
+        The provided arguments are the URL to check and the regex pattern to search for in the response.
+        The health check is retried as specified by the retry function.
 
-    RUN: Executes commands within the container. In this Dockerfile:
-        It updates the package list and installs the OpenJDK 11 development kit (JDK).
-        It compiles the Java code located at "/app/src/main/java/com/example/MyApp.java."
-
-    EXPOSE: Informs Docker that the container will listen on port 80. However, this instruction doesn't actually publish the port to the host.
-
-    CMD: Specifies the default command to run when the container is started. In this case, it runs the Java application using the "java" command with the classpath and main class provided.
+In the context of a deployment pipeline, this script is used to check whether the deployed application is 
+responsive and functioning correctly. If the application doesn't respond within the specified retries, it 
+exits with an error status, indicating that the application is not healthy. Otherwise, it reports that the 
+application is up.
 
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)<br>
 > <sup>MyApp.java creates a basic HTTP server that responds with a simple web page when accessed.</sup><br>
