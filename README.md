@@ -13916,5 +13916,710 @@ Events:
   Type    Reason             Age   From                   Message
   ----    ------             ----  ----                   -------
   Normal  ScalingReplicaSet  18m   deployment-controller  Scaled up replica set dev-deployment-5775796674 to 2
-  
+```
+```
+Started by upstream project "test-aws" build number 11
+originally caused by:
+ Started by user a
+Obtained Jenkinsfile-1 from git https://github.com/HarrierPanels/my-java-project.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on EC2 (Amazon-EC2) - aws-ec2-agent1 (i-00595c8913d0c9cdd) in /home/ec2-user/jenkins/workspace/cd-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential github-creds-user-token
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /home/ec2-user/jenkins/workspace/cd-pipeline/.git # timeout=10
+Cleaning workspace
+ > git config remote.origin.url https://github.com/HarrierPanels/my-java-project.git # timeout=10
+ > git rev-parse --verify HEAD # timeout=10
+Resetting working tree
+ > git reset --hard # timeout=10
+ > git clean -fdx # timeout=10
+Fetching upstream changes from https://github.com/HarrierPanels/my-java-project.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.40.1'
+using GIT_ASKPASS to set credentials github-creds-user-token
+ > git fetch --tags --force --progress -- https://github.com/HarrierPanels/my-java-project.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 73cf457b5384706a98691a8c52a016bdc7e89301 (refs/remotes/origin/main)
+Commit message: "CD Pipeline"
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 73cf457b5384706a98691a8c52a016bdc7e89301 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main 73cf457b5384706a98691a8c52a016bdc7e89301 # timeout=10
+ > git rev-list --no-walk 73cf457b5384706a98691a8c52a016bdc7e89301 # timeout=10
+Cleaning workspace
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withCredentials
+WARNING: Unknown parameter(s) found for class type 'com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding': keyIdVariable,secretVariable
+ > git rev-parse --verify HEAD # timeout=10
+Resetting working tree
+ > git reset --hard # timeout=10
+ > git clean -fdx # timeout=10
+Masking supported pattern matches of $AWS_ACCESS_KEY_ID or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential github-creds-user-token
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /home/ec2-user/jenkins/workspace/cd-pipeline/.git # timeout=10
+Cleaning workspace
+ > git config remote.origin.url https://github.com/HarrierPanels/my-java-project.git # timeout=10
+ > git rev-parse --verify HEAD # timeout=10
+Resetting working tree
+ > git reset --hard # timeout=10
+ > git clean -fdx # timeout=10
+Fetching upstream changes from https://github.com/HarrierPanels/my-java-project.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.40.1'
+using GIT_ASKPASS to set credentials github-creds-user-token
+ > git fetch --tags --force --progress -- https://github.com/HarrierPanels/my-java-project.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 73cf457b5384706a98691a8c52a016bdc7e89301 (refs/remotes/origin/main)
+Commit message: "CD Pipeline"
+Cleaning workspace
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Fetch Docker Hub Tags)
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 73cf457b5384706a98691a8c52a016bdc7e89301 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main 73cf457b5384706a98691a8c52a016bdc7e89301 # timeout=10
+ > git rev-parse --verify HEAD # timeout=10
+Resetting working tree
+ > git reset --hard # timeout=10
+ > git clean -fdx # timeout=10
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ curl -s https://hub.docker.com/v2/repositories/harrierpanels/myapp/tags
+[Pipeline] input
+Input requested
+Approved by a
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Select Environment)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] input
+Input requested
+Approved by a
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to Environment)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+109 chosen for qa:
+[Pipeline] sh
++ aws iam get-role --role-name ecsTaskExecutionRole
+
+An error occurred (NoSuchEntity) when calling the GetRole operation: The role with name ecsTaskExecutionRole cannot be found.
+[Pipeline] sh
++ aws iam create-role --role-name ecsTaskExecutionRole --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"ecs-tasks.amazonaws.com"},"Action":"sts:AssumeRole"}]}'
+{
+    "Role": {
+        "Path": "/",
+        "RoleName": "ecsTaskExecutionRole",
+        "RoleId": "AROAWRDHBB4G4YP3YR2RG",
+        "Arn": "arn:aws:iam::449040158477:role/ecsTaskExecutionRole",
+        "CreateDate": "2023-11-02T19:15:16+00:00",
+        "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Service": "ecs-tasks.amazonaws.com"
+                    },
+                    "Action": "sts:AssumeRole"
+                }
+            ]
+        }
+    }
+}
+[Pipeline] sh
++ aws iam put-role-policy --role-name ecsTaskExecutionRole --policy-name ECSTaskExecutionRolePolicy --policy-document '{"Version":"2012-10-17","Statement":[{"Sid":"ECSTaskExecutionRolePermissions","Effect":"Allow","Action":["ecr:GetAuthorizationToken","ecr:BatchCheckLayerAvailability","ecr:GetDownloadUrlForLayer","ecr:BatchGetImage","ecs:RunTask","ecs:StopTask","logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents"],"Resource":"*"}]}'
+[Pipeline] sh
++ tr -d '\n'
++ aws sts get-caller-identity --query Account --output text
+[Pipeline] sh
++ sed -i s/aws_account_id/449040158477/g qa-deployment-service.json
+[Pipeline] sh
++ sed -i 's/harrierpanels\/myapp:latest/harrierpanels\/myapp:109/g' qa-deployment-service.json
+[Pipeline] sh
++ aws ecs register-task-definition --cli-input-json file://qa-deployment-service.json
+{
+    "taskDefinition": {
+        "taskDefinitionArn": "arn:aws:ecs:us-east-1:449040158477:task-definition/qa-fargate:1",
+        "containerDefinitions": [
+            {
+                "name": "myapp",
+                "image": "harrierpanels/myapp:109",
+                "cpu": 0,
+                "portMappings": [
+                    {
+                        "containerPort": 80,
+                        "hostPort": 80,
+                        "protocol": "tcp"
+                    }
+                ],
+                "essential": true,
+                "environment": [],
+                "mountPoints": [],
+                "volumesFrom": []
+            }
+        ],
+        "family": "qa-fargate",
+        "executionRoleArn": "arn:aws:iam::449040158477:role/ecsTaskExecutionRole",
+        "networkMode": "awsvpc",
+        "revision": 1,
+        "volumes": [],
+        "status": "ACTIVE",
+        "requiresAttributes": [
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+            },
+            {
+                "name": "ecs.capability.task-eni"
+            }
+        ],
+        "placementConstraints": [],
+        "compatibilities": [
+            "EC2",
+            "FARGATE"
+        ],
+        "cpu": "256",
+        "memory": "512",
+        "registeredAt": "2023-11-02T19:15:34.023000+00:00",
+        "registeredBy": "arn:aws:iam::449040158477:user/cloud_user"
+    }
+}
+[Pipeline] sh
++ aws ec2 describe-security-groups --filters Name=group-name,Values=Secjen --query 'SecurityGroups[0].GroupId' --output text
+[Pipeline] sh
+++ aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query 'Vpcs[0].VpcId' --output text
++ aws ec2 describe-subnets --filters Name=vpc-id,Values=vpc-07c094a14a75869a8 --query 'Subnets[0].SubnetId' --output text
+[Pipeline] sh
++ aws ecs create-service --cluster qa-cluster --service-name qa-service --task-definition qa-fargate --desired-count 1 --launch-type FARGATE --network-configuration 'awsvpcConfiguration={subnets=[subnet-05aad6e4e6ab6159b],securityGroups=[sg-07efc7f47b9444016],assignPublicIp=ENABLED}'
+{
+    "service": {
+        "serviceArn": "arn:aws:ecs:us-east-1:449040158477:service/qa-cluster/qa-service",
+        "serviceName": "qa-service",
+        "clusterArn": "arn:aws:ecs:us-east-1:449040158477:cluster/qa-cluster",
+        "loadBalancers": [],
+        "serviceRegistries": [],
+        "status": "ACTIVE",
+        "desiredCount": 1,
+        "runningCount": 0,
+        "pendingCount": 0,
+        "launchType": "FARGATE",
+        "platformVersion": "LATEST",
+        "platformFamily": "Linux",
+        "taskDefinition": "arn:aws:ecs:us-east-1:449040158477:task-definition/qa-fargate:1",
+        "deploymentConfiguration": {
+            "deploymentCircuitBreaker": {
+                "enable": false,
+                "rollback": false
+            },
+            "maximumPercent": 200,
+            "minimumHealthyPercent": 100
+        },
+        "deployments": [
+            {
+                "id": "ecs-svc/5417389106664062108",
+                "status": "PRIMARY",
+                "taskDefinition": "arn:aws:ecs:us-east-1:449040158477:task-definition/qa-fargate:1",
+                "desiredCount": 1,
+                "pendingCount": 0,
+                "runningCount": 0,
+                "failedTasks": 0,
+                "createdAt": "2023-11-02T19:15:45.280000+00:00",
+                "updatedAt": "2023-11-02T19:15:45.280000+00:00",
+                "launchType": "FARGATE",
+                "platformVersion": "1.4.0",
+                "platformFamily": "Linux",
+                "networkConfiguration": {
+                    "awsvpcConfiguration": {
+                        "subnets": [
+                            "subnet-05aad6e4e6ab6159b"
+                        ],
+                        "securityGroups": [
+                            "sg-07efc7f47b9444016"
+                        ],
+                        "assignPublicIp": "ENABLED"
+                    }
+                },
+                "rolloutState": "IN_PROGRESS",
+                "rolloutStateReason": "ECS deployment ecs-svc/5417389106664062108 in progress."
+            }
+        ],
+        "roleArn": "arn:aws:iam::449040158477:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+        "events": [],
+        "createdAt": "2023-11-02T19:15:45.280000+00:00",
+        "placementConstraints": [],
+        "placementStrategy": [],
+        "networkConfiguration": {
+            "awsvpcConfiguration": {
+                "subnets": [
+                    "subnet-05aad6e4e6ab6159b"
+                ],
+                "securityGroups": [
+                    "sg-07efc7f47b9444016"
+                ],
+                "assignPublicIp": "ENABLED"
+            }
+        },
+        "schedulingStrategy": "REPLICA",
+        "deploymentController": {
+            "type": "ECS"
+        },
+        "createdBy": "arn:aws:iam::449040158477:user/cloud_user",
+        "enableECSManagedTags": false,
+        "propagateTags": "NONE",
+        "enableExecuteCommand": false
+    }
+}
+[Pipeline] sh
++ aws ecs list-tasks --cluster qa-cluster --service qa-service --query 'taskArns[0]' --output text
++ tr -d '\n'
+[Pipeline] sleep
+Sleeping for 10 sec
+[Pipeline] sh
++ aws ecs list-tasks --cluster qa-cluster --service qa-service --query 'taskArns[0]' --output text
++ tr -d '\n'
+[Pipeline] sh
++ tr -d '\n'
++ aws ecs describe-tasks --cluster qa-cluster --tasks arn:aws:ecs:us-east-1:449040158477:task/qa-cluster/b2a64f5120fc4d81a7b8f803bfb7d470 --query 'tasks[0].attachments[0].details[1].value' --output text
+[Pipeline] sh
++ aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp'
+[Pipeline] sh
++ aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.subnets[0]' --output text
++ tr -d '\n'
+[Pipeline] sh
++ aws ec2 describe-network-interfaces --network-interface-ids eni-012d1b4b15dc02308 --query 'NetworkInterfaces[0].PrivateIpAddress' --output text
++ tr -d '\n'
+[Pipeline] sh
++ aws ec2 describe-network-interfaces --filters Name=subnet-id,Values=subnet-05aad6e4e6ab6159b Name=private-ip-address,Values=172.31.22.31 --query 'NetworkInterfaces[0].Association.PublicIp' --output text
++ tr -d '\n'
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Health Check)
+[Pipeline] timeout
+Timeout set to expire in 3 min 0 sec
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ chmod +x healthcheck.sh
+[Pipeline] sh
++ ./healthcheck.sh 54.236.6.254 'Harrier|Maven'
+Host UP
+[Pipeline] echo
+Health check passed
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] office365ConnectorSend
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+```
+```
+Step	Arguments			Status
+Start of Pipeline - (1 min 56 sec in block)			
+	
+node - (1 min 54 sec in block)	aws2023		
+node block - (1 min 54 sec in block)			
+	
+stage - (5.7 sec in block)	Declarative: Checkout SCM		
+stage block (Declarative: Checkout SCM) - (5.3 sec in block)			
+	
+checkout - (5.1 sec in self)			
+withEnv - (1 min 48 sec in block)	GIT_BRANCH, GIT_COMMIT, GIT_LOCAL_BRANCH, GIT_PREVIOUS_COMMIT, GIT_PREVIOUS_SUCCESSFUL_COMMIT, GIT_URL		
+withEnv block - (1 min 48 sec in block)			
+	
+withCredentials - (1 min 48 sec in block)			
+withCredentials block - (1 min 48 sec in block)			
+	
+stage - (3.7 sec in block)	Checkout		
+stage block (Checkout) - (3.6 sec in block)			
+	
+checkout - (3.4 sec in self)			
+stage - (10 sec in block)	Fetch Docker Hub Tags		
+stage block (Fetch Docker Hub Tags) - (10 sec in block)			
+	
+script - (10 sec in block)			
+script block - (9.9 sec in block)			
+	
+sh - (3.4 sec in self)	curl -s https://hub.docker.com/v2/repositories/harrierpanels/myapp/tags		
+input - (6.3 sec in self)			
+stage - (16 sec in block)	Select Environment		
+stage block (Select Environment) - (16 sec in block)			
+	
+script - (16 sec in block)			
+script block - (16 sec in block)			
+	
+input - (15 sec in self)			
+stage - (1 min 9 sec in block)	Deploy to Environment		
+stage block (Deploy to Environment) - (1 min 9 sec in block)			
+	
+script - (1 min 8 sec in block)			
+script block - (1 min 8 sec in block)			
+	
+echo - (26 ms in self)	109 chosen for qa:		
+sh - (3.1 sec in self)	aws iam get-role --role-name ecsTaskExecutionRole		
+sh - (4.2 sec in self)	aws iam create-role --role-name ecsTaskExecutionRole --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"ecs-tasks.amazonaws.com"},"Action":"sts:AssumeRole"}]}'		
+sh - (4.1 sec in self)	aws iam put-role-policy --role-name ecsTaskExecutionRole --policy-name ECSTaskExecutionRolePolicy --policy-document '{"Version":"2012-10-17","Statement":[{"Sid":"ECSTaskExecutionRolePermissions","Effect":"Allow","Action":["ecr:GetAuthorizationToken","ecr:BatchCheckLayerAvailability","ecr:GetDownloadUrlForLayer","ecr:BatchGetImage","ecs:RunTask","ecs:StopTask","logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents"],"Resource":"*"}]}'		
+sh - (3.2 sec in self)	aws sts get-caller-identity --query Account --output text | tr -d '\n'		
+sh - (3 sec in self)	sed -i 's/aws_account_id/449040158477/g' qa-deployment-service.json		
+sh - (3 sec in self)	sed -i 's/harrierpanels\/myapp:latest/harrierpanels\/myapp:109/g' qa-deployment-service.json		
+sh - (3 sec in self)	aws ecs register-task-definition --cli-input-json file://qa-deployment-service.json		
+sh - (3.3 sec in self)	aws ec2 describe-security-groups --filters "Name=group-name,Values=Secjen" --query "SecurityGroups[0].GroupId" --output text		
+sh - (4.5 sec in self)	aws ec2 describe-subnets --filters "Name=vpc-id,Values=$(aws ec2 describe-vpcs --filters "Name=isDefault,Values=true" --query "Vpcs[0].VpcId" --output text)" --query "Subnets[0].SubnetId" --output text		
+sh - (3 sec in self)	aws ecs create-service --cluster qa-cluster --service-name qa-service --task-definition qa-fargate --desired-count 1 --launch-type 'FARGATE' --network-configuration 'awsvpcConfiguration={subnets=[subnet-05aad6e4e6ab6159b],securityGroups=[sg-07efc7f47b9444016],assignPublicIp=ENABLED}'		
+sh - (3.2 sec in self)	aws ecs list-tasks --cluster qa-cluster --service qa-service --query 'taskArns[0]' --output text | tr -d '\n'		
+sleep - (10 sec in self)	10		
+sh - (3.6 sec in self)	aws ecs list-tasks --cluster qa-cluster --service qa-service --query 'taskArns[0]' --output text | tr -d '\n'		
+sh - (3.3 sec in self)	aws ecs describe-tasks --cluster qa-cluster --tasks arn:aws:ecs:us-east-1:449040158477:task/qa-cluster/b2a64f5120fc4d81a7b8f803bfb7d470 --query 'tasks[0].attachments[0].details[1].value' --output text | tr -d '\n'		
+sh - (3.3 sec in self)	aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp'		
+sh - (3.3 sec in self)	aws ecs describe-services --cluster qa-cluster --services qa-service --query 'services[0].networkConfiguration.awsvpcConfiguration.subnets[0]' --output text | tr -d '\n'		
+sh - (3.3 sec in self)	aws ec2 describe-network-interfaces --network-interface-ids eni-012d1b4b15dc02308 --query 'NetworkInterfaces[0].PrivateIpAddress' --output text | tr -d '\n'		
+sh - (3.3 sec in self)	aws ec2 describe-network-interfaces --filters Name=subnet-id,Values=subnet-05aad6e4e6ab6159b Name=private-ip-address,Values=172.31.22.31 --query 'NetworkInterfaces[0].Association.PublicIp' --output text | tr -d '\n'		
+stage - (7.6 sec in block)	Health Check		
+stage block (Health Check) - (7.5 sec in block)			
+	
+timeout - (7.3 sec in block)			
+timeout block - (7.2 sec in block)			
+	
+script - (7 sec in block)			
+script block - (6.9 sec in block)			
+	
+sh - (3.3 sec in self)	chmod +x healthcheck.sh		
+sh - (3.5 sec in self)	./healthcheck.sh 54.236.6.254 'Harrier|Maven'		
+echo - (16 ms in self)	Health check passed		
+stage - (0.45 sec in block)	Declarative: Post Actions		
+stage block (Declarative: Post Actions) - (0.25 sec in block)			
+	
+office365ConnectorSend - (0.12 sec in self)	
+```
+#### MS Teams notification:
+> [Yesterday 21:16] Jenkins<br>
+> cd-pipeline: Build #142<br>
+> Notification from cd-pipeline<br>
+[Container myapp:109 deployed successfully to qa environment by cd-pipeline No: 142](https://teams.microsoft.com/l/message/19:nrrgA8KPRE6A8DqMK1O4K9ADCOa3aqbPg4blQHV1BhY1@thread.tacv2/1698952589868?tenantId=b41b72d0-4e9f-4c26-8a69-f949f367c91d&groupId=8dab633d-3412-4b31-992e-3e7f036cdd1f&parentMessageId=1698952589868&teamName=EPAM%20DevOps%20UA%20Internal%20course&channelName=General&createdTime=1698952589868)
+```
+[ec2-user@ip-172-31-47-155 ~]$ aws ecs list-task-definitions
+{
+    "taskDefinitionArns": [
+        "arn:aws:ecs:us-east-1:449040158477:task-definition/qa-fargate:1"
+    ]
+}
+
+[ec2-user@ip-172-31-47-155 ~]$ aws ecs list-services --cluster qa-cluster
+{
+    "serviceArns": [
+        "arn:aws:ecs:us-east-1:449040158477:service/qa-cluster/qa-service"
+    ]
+}
+
+[ec2-user@ip-172-31-47-155 ~]$ aws ecs describe-services --cluster qa-cluster --services q
+a-service
+{
+    "services": [
+        {
+            "serviceArn": "arn:aws:ecs:us-east-1:449040158477:service/qa-cluster/qa-service",
+            "serviceName": "qa-service",
+            "clusterArn": "arn:aws:ecs:us-east-1:449040158477:cluster/qa-cluster",
+            "loadBalancers": [],
+            "serviceRegistries": [],
+            "status": "ACTIVE",
+            "desiredCount": 1,
+            "runningCount": 1,
+            "pendingCount": 0,
+            "launchType": "FARGATE",
+            "platformVersion": "LATEST",
+            "platformFamily": "Linux",
+            "taskDefinition": "arn:aws:ecs:us-east-1:449040158477:task-definition/qa-fargate:1",
+            "deploymentConfiguration": {
+                "deploymentCircuitBreaker": {
+                    "enable": false,
+                    "rollback": false
+                },
+                "maximumPercent": 200,
+                "minimumHealthyPercent": 100
+            },
+            "deployments": [
+                {
+                    "id": "ecs-svc/5417389106664062108",
+                    "status": "PRIMARY",
+                    "taskDefinition": "arn:aws:ecs:us-east-1:449040158477:task-definition/qa-fargate:1",
+                    "desiredCount": 1,
+                    "pendingCount": 0,
+                    "runningCount": 1,
+                    "failedTasks": 0,
+                    "createdAt": "2023-11-02T19:15:45.280000+00:00",
+                    "updatedAt": "2023-11-02T19:16:19.592000+00:00",
+                    "launchType": "FARGATE",
+                    "platformVersion": "1.4.0",
+                    "platformFamily": "Linux",
+                    "networkConfiguration": {
+                        "awsvpcConfiguration": {
+                            "subnets": [
+                                "subnet-05aad6e4e6ab6159b"
+                            ],
+                            "securityGroups": [
+                                "sg-07efc7f47b9444016"
+                            ],
+                            "assignPublicIp": "ENABLED"
+                        }
+                    },
+                    "rolloutState": "COMPLETED",
+                    "rolloutStateReason": "ECS deployment ecs-svc/5417389106664062108 completed."
+                }
+            ],
+            "roleArn": "arn:aws:iam::449040158477:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+            "events": [
+                {
+                    "id": "174ecd03-3556-4121-bf25-dfbb0e7f2a51",
+                    "createdAt": "2023-11-02T19:16:19.599000+00:00",
+                    "message": "(service qa-service) has reached a steady state."
+                },
+                {
+                    "id": "48ae83ea-fd64-456d-9deb-9588a967263c",
+                    "createdAt": "2023-11-02T19:16:19.598000+00:00",
+                    "message": "(service qa-service) (deployment ecs-svc/5417389106664062108) deployment completed."
+                },
+                {
+                    "id": "afbe572f-ee67-4c89-9095-0e48aa39a61c",
+                    "createdAt": "2023-11-02T19:15:49.977000+00:00",
+                    "message": "(service qa-service) has started 1 tasks: (task b2a64f5120fc4d81a7b8f803bfb7d470)."
+                }
+            ],
+            "createdAt": "2023-11-02T19:15:45.280000+00:00",
+            "placementConstraints": [],
+            "placementStrategy": [],
+            "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "subnet-05aad6e4e6ab6159b"
+                    ],
+                    "securityGroups": [
+                        "sg-07efc7f47b9444016"
+                    ],
+                    "assignPublicIp": "ENABLED"
+                }
+            },
+            "schedulingStrategy": "REPLICA",
+            "deploymentController": {
+                "type": "ECS"
+            },
+            "createdBy": "arn:aws:iam::449040158477:user/cloud_user",
+            "enableECSManagedTags": false,
+            "propagateTags": "NONE",
+            "enableExecuteCommand": false
+        }
+    ],
+    "failures": []
+}
+
+[ec2-user@ip-172-31-47-155 ~]$ aws ecs list-tasks --cluster qa-cluster --service qa-servic
+e
+{
+    "taskArns": [
+        "arn:aws:ecs:us-east-1:449040158477:task/qa-cluster/b2a64f5120fc4d81a7b8f803bfb7d470"
+    ]
+}
+
+[ec2-user@ip-172-31-47-155 ~]$ aws ecs describe-tasks --cluster qa-cluster --tasks arn:aws:ecs:us-east-1:449040158477:task/qa-cluster/b2a64f5120fc4d81a7b8f803bfb7d470
+{
+    "tasks": [
+        {
+            "attachments": [
+                {
+                    "id": "cfc7ad79-0d0c-45b1-88df-c42341a6ec2e",
+                    "type": "ElasticNetworkInterface",
+                    "status": "ATTACHED",
+                    "details": [
+                        {
+                            "name": "subnetId",
+                            "value": "subnet-05aad6e4e6ab6159b"
+                        },
+                        {
+                            "name": "networkInterfaceId",
+                            "value": "eni-012d1b4b15dc02308"
+                        },
+                        {
+                            "name": "macAddress",
+                            "value": "0a:8c:c7:3a:32:a7"
+                        },
+                        {
+                            "name": "privateDnsName",
+                            "value": "ip-172-31-22-31.ec2.internal"
+                        },
+                        {
+                            "name": "privateIPv4Address",
+                            "value": "172.31.22.31"
+                        }
+                    ]
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "ecs.cpu-architecture",
+                    "value": "x86_64"
+                }
+            ],
+            "availabilityZone": "us-east-1a",
+            "clusterArn": "arn:aws:ecs:us-east-1:449040158477:cluster/qa-cluster",
+            "connectivity": "CONNECTED",
+            "connectivityAt": "2023-11-02T19:15:54.378000+00:00",
+            "containers": [
+                {
+                    "containerArn": "arn:aws:ecs:us-east-1:449040158477:container/qa-cluster/b2a64f5120fc4d81a7b8f803bfb7d470/5b18396d-1b52-40af-8c1e-6fd0ee683320",
+                    "taskArn": "arn:aws:ecs:us-east-1:449040158477:task/qa-cluster/b2a64f5120fc4d81a7b8f803bfb7d470",
+                    "name": "myapp",
+                    "image": "harrierpanels/myapp:109",
+                    "imageDigest": "sha256:fb63cffb0b9576a2ec91cfe4c7820c810c129bc02c6f7c553af8aec48cf2c85a",
+                    "runtimeId": "b2a64f5120fc4d81a7b8f803bfb7d470-319989926",
+                    "lastStatus": "RUNNING",
+                    "networkBindings": [],
+                    "networkInterfaces": [
+                        {
+                            "attachmentId": "cfc7ad79-0d0c-45b1-88df-c42341a6ec2e",
+                            "privateIpv4Address": "172.31.22.31"
+                        }
+                    ],
+                    "healthStatus": "UNKNOWN",
+                    "cpu": "0"
+                }
+            ],
+            "cpu": "256",
+            "createdAt": "2023-11-02T19:15:49.871000+00:00",
+            "desiredStatus": "RUNNING",
+            "enableExecuteCommand": false,
+            "group": "service:qa-service",
+            "healthStatus": "UNKNOWN",
+            "lastStatus": "RUNNING",
+            "launchType": "FARGATE",
+            "memory": "512",
+            "overrides": {
+                "containerOverrides": [
+                    {
+                        "name": "myapp"
+                    }
+                ],
+                "inferenceAcceleratorOverrides": []
+            },
+            "platformVersion": "1.4.0",
+            "platformFamily": "Linux",
+            "pullStartedAt": "2023-11-02T19:16:00.797000+00:00",
+            "pullStoppedAt": "2023-11-02T19:16:17.922000+00:00",
+            "startedAt": "2023-11-02T19:16:19.197000+00:00",
+            "startedBy": "ecs-svc/5417389106664062108",
+            "tags": [],
+            "taskArn": "arn:aws:ecs:us-east-1:449040158477:task/qa-cluster/b2a64f5120fc4d81a7b8f803bfb7d470",
+            "taskDefinitionArn": "arn:aws:ecs:us-east-1:449040158477:task-definition/qa-fargate:1",
+            "version": 3,
+            "ephemeralStorage": {
+                "sizeInGiB": 20
+            }
+        }
+    ],
+    "failures": []
+}
+
+ [ec2-user@ip-172-31-47-155 ~]$ aws ec2 describe-network-interfaces --network-interface-id eni-012d1b4b15dc02308
+{
+    "NetworkInterfaces": [
+        {
+            "Association": {
+                "IpOwnerId": "amazon",
+                "PublicDnsName": "ec2-54-236-6-254.compute-1.amazonaws.com",
+                "PublicIp": "54.236.6.254"
+            },
+            "Attachment": {
+                "AttachTime": "2023-11-02T19:15:55+00:00",
+                "AttachmentId": "eni-attach-0cc79c8b370eee506",
+                "DeleteOnTermination": false,
+                "DeviceIndex": 1,
+                "NetworkCardIndex": 0,
+                "InstanceOwnerId": "047054595675",
+                "Status": "attached"
+            },
+            "AvailabilityZone": "us-east-1a",
+            "Description": "arn:aws:ecs:us-east-1:449040158477:attachment/cfc7ad79-0d0c-45b1-88df-c42341a6ec2e",
+            "Groups": [
+                {
+                    "GroupName": "Secjen",
+                    "GroupId": "sg-07efc7f47b9444016"
+                }
+            ],
+            "InterfaceType": "interface",
+            "Ipv6Addresses": [],
+            "MacAddress": "0a:8c:c7:3a:32:a7",
+            "NetworkInterfaceId": "eni-012d1b4b15dc02308",
+            "OwnerId": "449040158477",
+            "PrivateDnsName": "ip-172-31-22-31.ec2.internal",
+            "PrivateIpAddress": "172.31.22.31",
+            "PrivateIpAddresses": [
+                {
+                    "Association": {
+                        "IpOwnerId": "amazon",
+                        "PublicDnsName": "ec2-54-236-6-254.compute-1.amazonaws.com",
+                        "PublicIp": "54.236.6.254"
+                    },
+                    "Primary": true,
+                    "PrivateDnsName": "ip-172-31-22-31.ec2.internal",
+                    "PrivateIpAddress": "172.31.22.31"
+                }
+            ],
+            "RequesterId": "578734482556",
+            "RequesterManaged": true,
+            "SourceDestCheck": true,
+            "Status": "in-use",
+            "SubnetId": "subnet-05aad6e4e6ab6159b",
+            "TagSet": [],
+            "VpcId": "vpc-07c094a14a75869a8"
+        }
+    ]
+} 
+
+[ec2-user@ip-172-31-47-155 ~]$ curl 54.236.6.254
+Hello, Maven!
 ```
