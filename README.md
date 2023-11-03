@@ -94,4 +94,27 @@ my-java-project/
     CMD: Specifies the default command to run when the container is started. In this case, it runs the Java application using the "java" command with the classpath and main class provided.
 
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)
-> <sup></sup>
+> <sup>MyApp.java creates a basic HTTP server that responds with a simple web page when accessed.</sup><br>
+
+    It defines a package named com.example.
+
+    The MyApp class contains the main method, which serves as the entry point of the program. Inside the main method:
+        It creates an HttpServer instance.
+        Binds the server to listen on port 80.
+        Associates a custom MyHandler with the root context ("/").
+        Sets the executor to null.
+        Starts the server and prints a message indicating that the server has started.
+
+    The MyHandler class is a nested static class that implements the HttpHandler interface, responsible for handling incoming HTTP requests. Inside the handle method:
+        It constructs an HTML response as a string.
+        Sends an HTTP 200 (OK) response with the response length.
+        Writes the response to the output stream and closes it.
+
+    The HTML response includes a simple webpage:
+        It displays an image and a message.
+        The image is sourced from a URL.
+        There's a link to an external webpage.
+        The page is generated with Java and includes the current year using Calendar.
+
+        
+
