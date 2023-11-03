@@ -13466,7 +13466,7 @@ my-java-project/
 
 
 > [healthcheck.sh](./healthcheck.sh) <br>
-> <sup>The script is used in a pipeline for performing health checks on a deployed application.</sup><br>
+> <sup>The script is used in a pipeline for performing health checks on a deployed application. In the context of a deployment pipeline, this script is used to check whether the deployed application is responsive and functioning correctly. If the application doesn't respond within the specified retries, it exits with an error status, indicating that the application is not healthy. Otherwise, it reports that the application is up.</sup><br>
 
     retry Function:
         This function allows for retrying a given command until it succeeds or until a maximum number 
@@ -13489,10 +13489,69 @@ my-java-project/
         The provided arguments are the URL to check and the regex pattern to search for in the response.
         The health check is retried as specified by the retry function. 
 	
-        In the context of a deployment pipeline, this script is used to check whether the deployed 
-        application is responsive and functioning correctly. If the application doesn't respond within 
-	   the specified retries, it exits with an error status, indicating that the application is not 
-        healthy. Otherwise, it reports that the application is up.
+ > [qa-deployment-service.json](./qa-deployment-service.json) <br>
+ > <sup>The file is a Kubernetes configuration file used for deploying the myapp container to the QA environment,
+ > which is an AWS ECS cluster. The file is a JSON definition specifying the parameters for the deployment. It is
+ > a task definition for deploying the myapp container to an AWS ECS cluster in the QA environment. The file can be customized for different configurations and deployments as needed.</sup><br>
+
+    Family: "qa-fargate"
+        Specifies the family name for the task definition.
+
+    Container Definitions (Array):
+
+        Defines an array of container definitions, each for a specific container within the task.
+
+        Container Definition:
+
+            Name: "myapp"
+                Specifies the name of the container as "myapp."
+
+            Image: "harrierpanels/myapp:latest"
+                Specifies the Docker image to use for this container, including its repository and tag.
+
+            CPU: 0
+                Sets the CPU units allocated to the container.
+
+            Port Mappings (Array):
+
+                Maps ports from the container to the host.
+
+                Port Mapping:
+
+                    Container Port: 80
+                        Specifies that the container listens on port 80.
+
+                    Host Port: 80
+                        Specifies that the host should forward traffic from its port 80 to the container's port 80.
+
+                    Protocol: "tcp"
+                        Defines the communication protocol as TCP.
+
+            Essential: true
+                Indicates that this container is essential for the task to run successfully.
+
+            Environment: []
+                Defines an empty array for environment variables, which can be added to pass configuration to the container.
+
+            Mount Points: []
+                Specifies an empty array for mounting volumes in the container.
+
+            Volumes From: []
+                Defines an empty array for volumes that can be mounted from other containers.
+
+    Execution Role Arn:
+        Specifies the AWS Identity and Access Management (IAM) role used for the task execution.
+        The placeholder "arn:aws:iam::aws_account_id:role/ecsTaskExecutionRole" should be replaced with the actual IAM role's ARN, which is used to grant permissions to tasks in the cluster.
+
+    Network Mode: "awsvpc"
+        Sets the network mode to "awsvpc," which is a mode that uses Amazon VPC for networking.
+
+    CPU: "256"
+        Specifies the amount of CPU units allocated to the task.
+
+    Memory: "512"
+        Defines the amount of memory allocated to the task.
+
 
 > [MyApp.java](./my-java-app/src/main/java/com/example/MyApp.java)<br>
 > <sup>MyApp.java creates a basic HTTP server that responds with a simple web page when accessed.</sup><br>
