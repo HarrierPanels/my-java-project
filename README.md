@@ -1,4 +1,5 @@
-[![EPAM](https://img.shields.io/badge/Cloud&DevOps%20UA%20Lab%202nd%20Path-Cloud%20AWS%20Task-orange)](./)
+[![CICD](https://img.shields.io/badge/HarrierPanels-CI%2FCD-blue)](./)
+[![EPAM](https://img.shields.io/badge/Cloud&DevOps%20UA%20Lab%202nd%20Path-Jenkins%20Task-orange)](./)
 [![HitCount](https://hits.dwyl.com/HarrierPanels/my-java-project.svg?style=flat&show=unique)](http://hits.dwyl.com/HarrierPanels/my-java-project)
 <br>
 ## Create a CI pipeline:
